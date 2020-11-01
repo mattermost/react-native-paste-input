@@ -1,9 +1,9 @@
 import { NativeModules } from 'react-native';
 
-type ReactNativePasteInputType = {
+type PasteInputType = {
   multiply(a: number, b: number): Promise<number>;
 };
 
-const { ReactNativePasteInput } = NativeModules;
+const { PasteInput } = NativeModules;
 
-export default ReactNativePasteInput as ReactNativePasteInputType;
+export default PasteInput as PasteInputType;

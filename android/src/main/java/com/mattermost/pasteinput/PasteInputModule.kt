@@ -1,14 +1,14 @@
-package com.mattermostreactnativepasteinput
+package com.mattermost.pasteinput
 
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.Promise
 
-class ReactNativePasteInputModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+class PasteInputModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
     override fun getName(): String {
-        return "ReactNativePasteInput"
+        return "PasteInput"
     }
 
     // Example method

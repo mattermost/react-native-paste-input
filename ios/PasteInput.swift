@@ -1,4 +1,4 @@
-@objc(ReactNativePasteInput)
+@objc(PasteInput)
 class ReactNativePasteInput: NSObject {
 
     @objc(multiply:withB:withResolver:withRejecter:)

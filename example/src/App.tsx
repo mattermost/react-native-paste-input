@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import ReactNativePasteInput from '@mattermost/react-native-paste-input';
+import PasteInput from '@mattermost/react-native-paste-input';
 
 export default function App() {
   const [result, setResult] = React.useState<number | undefined>();
 
   React.useEffect(() => {
-    ReactNativePasteInput.multiply(3, 7).then(setResult);
+    PasteInput.multiply(3, 7).then(setResult);
   }, []);
 
   return (
