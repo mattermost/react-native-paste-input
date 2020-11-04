@@ -7,11 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-
-
-		F4FF95D7245B92E800C19C63 /*  PasteInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /*  PasteInput.swift */; };
-
-		5E555C0D2413F4C50049A1A2 /* PasteInput.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* PasteInput.mm */; };
+		7FA49C9D255319CA00B359F2 /* PasteInputManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA49C8E255319CA00B359F2 /* PasteInputManager.m */; };
+		7FA49C9E255319CA00B359F2 /* PasteInputTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA49C8F255319CA00B359F2 /* PasteInputTextView.m */; };
+		7FA49C9F255319CA00B359F2 /* UIPasteboard+GetImageInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA49C90255319CA00B359F2 /* UIPasteboard+GetImageInfo.m */; };
+		7FA49CA0255319CA00B359F2 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA49C92255319CA00B359F2 /* UIImage+ImageEffects.m */; };
+		7FA49CA1255319CA00B359F2 /* PasteInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA49C97255319CA00B359F2 /* PasteInputView.m */; };
+		7FA49CA2255319CA00B359F2 /* UIImage+vImageScaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA49C98255319CA00B359F2 /* UIImage+vImageScaling.m */; };
+		7FA49CA3255319CA00B359F2 /* NSData+MimeType.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA49C9A255319CA00B359F2 /* NSData+MimeType.m */; };
+		7FA49CA4255319CA00B359F2 /* SwimeProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA49C9B255319CA00B359F2 /* SwimeProxy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,12 +31,22 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libPasteInput.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPasteInput.a; sourceTree = BUILT_PRODUCTS_DIR; };
-
-
-		B3E7B5891CC2AC0600A0062D /* PasteInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PasteInput.m; sourceTree = "<group>"; };
+		7FA49C8E255319CA00B359F2 /* PasteInputManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PasteInputManager.m; sourceTree = "<group>"; };
+		7FA49C8F255319CA00B359F2 /* PasteInputTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PasteInputTextView.m; sourceTree = "<group>"; };
+		7FA49C90255319CA00B359F2 /* UIPasteboard+GetImageInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIPasteboard+GetImageInfo.m"; sourceTree = "<group>"; };
+		7FA49C91255319CA00B359F2 /* PasteInputView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteInputView.h; sourceTree = "<group>"; };
+		7FA49C92255319CA00B359F2 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
+		7FA49C93255319CA00B359F2 /* NSData+MimeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MimeType.h"; sourceTree = "<group>"; };
+		7FA49C94255319CA00B359F2 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
+		7FA49C95255319CA00B359F2 /* PasteInputTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteInputTextView.h; sourceTree = "<group>"; };
+		7FA49C96255319CA00B359F2 /* PasteInputManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteInputManager.h; sourceTree = "<group>"; };
+		7FA49C97255319CA00B359F2 /* PasteInputView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PasteInputView.m; sourceTree = "<group>"; };
+		7FA49C98255319CA00B359F2 /* UIImage+vImageScaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+vImageScaling.m"; sourceTree = "<group>"; };
+		7FA49C99255319CA00B359F2 /* UIPasteboard+GetImageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIPasteboard+GetImageInfo.h"; sourceTree = "<group>"; };
+		7FA49C9A255319CA00B359F2 /* NSData+MimeType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MimeType.m"; sourceTree = "<group>"; };
+		7FA49C9B255319CA00B359F2 /* SwimeProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwimeProxy.swift; sourceTree = "<group>"; };
+		7FA49C9C255319CA00B359F2 /* UIImage+vImageScaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+vImageScaling.h"; sourceTree = "<group>"; };
 		F4FF95D5245B92E700C19C63 /* PasteInput-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PasteInput-Bridging-Header.h"; sourceTree = "<group>"; };
-		F4FF95D6245B92E800C19C63 /* PasteInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteInput.swift; sourceTree = "<group>"; };
-
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,12 +71,22 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-
-
-				F4FF95D6245B92E800C19C63 /* PasteInput.swift */,
-				B3E7B5891CC2AC0600A0062D /* PasteInput.m */,
+				7FA49C93255319CA00B359F2 /* NSData+MimeType.h */,
+				7FA49C9A255319CA00B359F2 /* NSData+MimeType.m */,
+				7FA49C96255319CA00B359F2 /* PasteInputManager.h */,
+				7FA49C8E255319CA00B359F2 /* PasteInputManager.m */,
+				7FA49C95255319CA00B359F2 /* PasteInputTextView.h */,
+				7FA49C8F255319CA00B359F2 /* PasteInputTextView.m */,
+				7FA49C91255319CA00B359F2 /* PasteInputView.h */,
+				7FA49C97255319CA00B359F2 /* PasteInputView.m */,
+				7FA49C9B255319CA00B359F2 /* SwimeProxy.swift */,
+				7FA49C94255319CA00B359F2 /* UIImage+ImageEffects.h */,
+				7FA49C92255319CA00B359F2 /* UIImage+ImageEffects.m */,
+				7FA49C9C255319CA00B359F2 /* UIImage+vImageScaling.h */,
+				7FA49C98255319CA00B359F2 /* UIImage+vImageScaling.m */,
+				7FA49C99255319CA00B359F2 /* UIPasteboard+GetImageInfo.h */,
+				7FA49C90255319CA00B359F2 /* UIPasteboard+GetImageInfo.m */,
 				F4FF95D5245B92E700C19C63 /* PasteInput-Bridging-Header.h */,
-
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -125,11 +148,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-
-
-				F4FF95D7245B92E800C19C63 /* PasteInput.swift in Sources */,
-				B3E7B58A1CC2AC0600A0062D /* PasteInput.m in Sources */,
-
+				7FA49CA3255319CA00B359F2 /* NSData+MimeType.m in Sources */,
+				7FA49CA1255319CA00B359F2 /* PasteInputView.m in Sources */,
+				7FA49CA4255319CA00B359F2 /* SwimeProxy.swift in Sources */,
+				7FA49CA0255319CA00B359F2 /* UIImage+ImageEffects.m in Sources */,
+				7FA49C9E255319CA00B359F2 /* PasteInputTextView.m in Sources */,
+				7FA49C9F255319CA00B359F2 /* UIPasteboard+GetImageInfo.m in Sources */,
+				7FA49CA2255319CA00B359F2 /* UIImage+vImageScaling.m in Sources */,
+				7FA49C9D255319CA00B359F2 /* PasteInputManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,11 +268,9 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PasteInput;
 				SKIP_INSTALL = YES;
-
 				SWIFT_OBJC_BRIDGING_HEADER = "PasteInput-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-
 			};
 			name = Debug;
 		};
@@ -263,10 +287,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PasteInput;
 				SKIP_INSTALL = YES;
-
 				SWIFT_OBJC_BRIDGING_HEADER = "PasteInput-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-
 			};
 			name = Release;
 		};
