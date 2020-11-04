@@ -11,10 +11,10 @@ import com.facebook.react.bridge.JavaScriptModule
 
 class PasteInputPackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
-        return Arrays.asList<NativeModule>(PasteInputModule(reactContext))
+      return emptyList<NativeModule>()
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
-        return emptyList<ViewManager<*, *>>()
+      return Arrays.asList<ViewManager<*, *>>(PasteInputManager(reactContext))
     }
 }
