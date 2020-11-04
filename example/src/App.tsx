@@ -22,11 +22,11 @@ export default function App() {
         }
     };
 
-    React.useEffect(() => {
-        requestAnimationFrame(() => {
-            inputRef.current?.focus();
-        });
-    }, [inputRef]);
+    // React.useEffect(() => {
+    //     requestAnimationFrame(() => {
+    //         inputRef.current?.focus();
+    //     });
+    // }, [inputRef]);
 
     return (
         <View style={styles.container}>

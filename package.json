@@ -1,7 +1,7 @@
 {
   "name": "@mattermost/react-native-paste-input",
   "version": "0.1.0",
-  "description": "React Native TextInput extension to allow pasting files",
+  "description": "React Native TextInput replacement to allow pasting files",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/src/index.d.ts",
@@ -17,7 +17,8 @@
     "!lib/typescript/example",
     "!**/__tests__",
     "!**/__fixtures__",
-    "!**/__mocks__"
+    "!**/__mocks__",
+    "!example"
   ],
   "scripts": {
     "test": "jest",
