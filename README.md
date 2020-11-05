@@ -10,7 +10,7 @@ the Photos gallery app.
 ## Installation
 
 ```sh
-npm install @mattermost/react-native-paste-input
+npm i --save-exact @mattermost/react-native-paste-input
 ```
 
 ## Demo
