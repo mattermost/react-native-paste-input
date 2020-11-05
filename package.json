@@ -18,7 +18,11 @@
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__",
-    "!example"
+    "!example",
+    "!.vscode",
+    "!**/.idea",
+    "!android/build",
+    "!ios/Build"
   ],
   "scripts": {
     "test": "jest",
