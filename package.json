@@ -21,8 +21,10 @@
     "!example",
     "!.vscode",
     "!**/.idea",
+    "!**/.gradle",
     "!android/build",
-    "!ios/Build"
+    "!ios/Build",
+    ".circleci"
   ],
   "scripts": {
     "test": "jest",

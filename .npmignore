@@ -4,7 +4,8 @@ lib/typescript/example
 **/__fixtures__,
 **/__mocks__
 .vscode
-.idea
-.gradle
+**/.idea
+**/.gradle
 android/build/
 ios/Build
+.circleci
