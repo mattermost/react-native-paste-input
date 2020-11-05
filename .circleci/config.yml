@@ -77,7 +77,7 @@ jobs:
       - attach_project
       - run:
           name: Release to GitHub
-          command: npm run release
+          command: npm run release -- --ci
 
   publish:
     executor: default
