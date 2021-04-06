@@ -30,7 +30,7 @@
     "test": "jest",
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "prepare": "bob build",
+    "prepare": "bob build && husky install",
     "release": "release-it",
     "example": "cd example && npm",
     "pods": "cd example && pod-install --quiet",
@@ -51,25 +51,27 @@
   },
   "homepage": "https://github.com/mattermost/react-native-paste-input#readme",
   "devDependencies": {
-    "@commitlint/config-conventional": "11.0.0",
-    "@react-native-community/bob": "0.16.2",
+    "@commitlint/config-conventional": "12.1.1",
+    "@react-native-community/bob": "0.17.1",
     "@react-native-community/eslint-config": "2.0.0",
-    "@release-it/conventional-changelog": "2.0.0",
-    "@types/jest": "26.0.15",
-    "@types/react": "16.9.55",
-    "@types/react-native": "0.63.30",
-    "commitlint": "11.0.0",
-    "eslint": "7.12.1",
-    "eslint-config-prettier": "6.15.0",
-    "eslint-plugin-prettier": "3.1.4",
-    "husky": "4.3.0",
-    "jest": "26.6.1",
-    "pod-install": "0.1.12",
-    "prettier": "2.1.2",
-    "react": "16.13.1",
-    "react-native": "0.63.3",
-    "release-it": "14.2.1",
-    "typescript": "3.8.3"
+    "@release-it/conventional-changelog": "2.0.1",
+    "@types/jest": "26.0.22",
+    "@types/react": "17.0.3",
+    "@types/react-native": "0.64.2",
+    "@typescript-eslint/eslint-plugin": "4.21.0",
+    "@typescript-eslint/parser": "4.21.0",
+    "commitlint": "12.1.1",
+    "eslint": "7.23.0",
+    "eslint-config-prettier": "8.1.0",
+    "eslint-plugin-prettier": "3.3.1",
+    "husky": "^6.0.0",
+    "jest": "26.6.3",
+    "pod-install": "0.1.19",
+    "prettier": "2.2.1",
+    "react": "17.0.2",
+    "react-native": "0.64.0",
+    "release-it": "14.5.1",
+    "typescript": "4.2.3"
   },
   "peerDependencies": {
     "react": "*",
@@ -81,12 +83,6 @@
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "npm run lint && npm run typescript"
-    }
   },
   "commitlint": {
     "extends": [
@@ -111,6 +107,7 @@
     }
   },
   "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
     "extends": [
       "@react-native-community",
       "prettier"

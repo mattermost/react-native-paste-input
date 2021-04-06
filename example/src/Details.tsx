@@ -1,49 +1,57 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import type { PastedFile } from '@mattermost/react-native-paste-input';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 interface DetailsProps {
     file?: PastedFile;
 }
 
-const styles = StyleSheet.create({
-    container: {
-        justifyContent: 'center',
-    },
-    image: {
-        width: 300,
-        height: 300,
-    },
-    imageContainer: {
-        alignItems: 'center',
-        marginBottom: 10,
-    },
-    infoContainer: {
-        paddingHorizontal: 16,
-        width: '90%',
-    },
-    info: {
-        flexDirection: 'row',
-    },
-    label: {
-        fontSize: 16,
-        lineHeight: 18,
-        fontWeight: '700',
-        marginRight: 5,
-    },
-    text: {
-        fontSize: 14,
-        lineHeight: 16,
-        flexWrap: 'wrap',
-        width: '90%',
-    },
-});
+const getStyle = (isDarkMode: boolean) => {
+    return StyleSheet.create({
+        container: {
+            justifyContent: 'center',
+        },
+        image: {
+            width: 300,
+            height: 300,
+        },
+        imageContainer: {
+            alignItems: 'center',
+            marginBottom: 10,
+        },
+        infoContainer: {
+            paddingHorizontal: 16,
+            width: '90%',
+        },
+        info: {
+            flexDirection: 'row',
+        },
+        label: {
+            color: isDarkMode ? Colors.white : Colors.black,
+            fontSize: 16,
+            lineHeight: 18,
+            fontWeight: '700',
+            marginRight: 5,
+        },
+        text: {
+            color: isDarkMode ? Colors.white : Colors.black,
+            fontSize: 14,
+            lineHeight: 16,
+            flexWrap: 'wrap',
+            width: '90%',
+        },
+    });
+};
 
 const Details = ({ file }: DetailsProps) => {
+    const isDarkMode = useColorScheme() === 'dark';
+
     if (!file) {
         return null;
     }
 
+    const styles = getStyle(isDarkMode);
     const isImage = file.type.includes('image');
     let imageElement;
     if (isImage) {
