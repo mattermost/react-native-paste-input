@@ -105,11 +105,11 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
 
     let viewCommands: TextInputNativeCommands;
     if (Platform.OS === 'android') {
-        viewCommands = require('react-native/Libraries/Components/TextInput/AndroidTextInputNativeComponent')
-            .Commands;
+        viewCommands =
+            require('react-native/Libraries/Components/TextInput/AndroidTextInputNativeComponent').Commands;
     } else {
-        viewCommands = require('react-native/Libraries/Components/TextInput/RCTMultilineTextInputNativeComponent')
-            .Commands;
+        viewCommands =
+            require('react-native/Libraries/Components/TextInput/RCTMultilineTextInputNativeComponent').Commands;
     }
 
     const lastNativeSelection = lastNativeSelectionState.selection;
