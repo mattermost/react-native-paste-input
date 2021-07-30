@@ -209,6 +209,7 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
             isFocused,
             focus: () => inputRef.current?.focus(),
             blur: () => inputRef.current?.blur(),
+            ...(inputRef.current || {}),
         }),
         [clear]
     );
