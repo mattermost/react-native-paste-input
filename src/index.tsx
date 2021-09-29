@@ -54,6 +54,7 @@ export interface PasteInputRef {
     isFocused(): boolean;
     focus(): void;
     blur(): void;
+    setNativeProps(nativeProps: object): void;
 }
 
 interface TextInputNativeCommands {
@@ -209,6 +210,7 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
             isFocused,
             focus: () => inputRef.current?.focus(),
             blur: () => inputRef.current?.blur(),
+            setNativeProps: inputRef.current?.setNativeProps,
             ...(inputRef.current || {}),
         }),
         [clear]
