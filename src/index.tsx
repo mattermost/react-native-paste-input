@@ -258,7 +258,6 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
     };
 
     const _onPaste = (event: PasteEvent) => {
-        console.log('HEY');
         if (props.onPaste) {
             const { data, error } = event.nativeEvent;
             props.onPaste(error?.message, data);
