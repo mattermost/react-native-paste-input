@@ -300,6 +300,8 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
             <TouchableWithoutFeedback
                 onLayout={props.onLayout}
                 onPress={_onPress}
+                onPressIn={props.onPressIn}
+                onPressOut={props.onPressOut}
                 accessible={props.accessible}
                 accessibilityLabel={props.accessibilityLabel}
                 accessibilityRole={props.accessibilityRole}
