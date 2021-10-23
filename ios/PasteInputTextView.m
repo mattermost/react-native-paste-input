@@ -38,7 +38,15 @@
     [super paste:sender];
     
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-    if (pasteboard.hasURLs || pasteboard.hasStrings || pasteboard.hasColors) {
+
+    BOOL hasStrings = pasteboard.hasStrings;
+    if (hasStrings) {
+        NSArray<NSString *> *strs = pasteboard.strings;
+        for (NSString *s in strs) {
+            hasStrings = [s length] != 0 && ![s containsString:@"<img src="];
+        }
+    }
+    if (pasteboard.hasURLs || hasStrings || pasteboard.hasColors) {
         return;
     }
     
@@ -48,6 +56,8 @@
             _onPaste(@{
                 @"data": files,
             });
+        } else {
+            return;
         }
     }
     
