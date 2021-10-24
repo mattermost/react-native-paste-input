@@ -11,7 +11,7 @@ let PasteInput: React.ForwardRefExoticComponent<
 if (Platform.OS === 'android') {
     PasteInput = require('./android');
 } else {
-    PasteInput = require('./ios');
+    PasteInput = require('./ios').default;
 }
 
 export default PasteInput;
