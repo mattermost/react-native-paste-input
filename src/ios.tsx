@@ -8,9 +8,7 @@ import React, {
     useState,
 } from 'react';
 import {
-    Platform,
     requireNativeComponent,
-    TextInputProps,
     TouchableWithoutFeedback,
     HostComponent,
     NativeSyntheticEvent,
@@ -22,57 +20,13 @@ import {
 import TextInputState from 'react-native/Libraries/Components/TextInput/TextInputState';
 import TextAncestor from 'react-native/Libraries/Text/TextAncestor';
 
-export interface PastedFile {
-    fileName: string;
-    fileSize: number;
-    type: string;
-    uri: string;
-}
-
-interface PasteEvent {
-    nativeEvent: {
-        data: Array<PastedFile>;
-        error?: {
-            message: string;
-        };
-    };
-}
-
-interface PasteInputProps extends TextInputProps {
-    disableCopyPaste?: boolean;
-    onPaste(error: string | null | undefined, files: Array<PastedFile>): void;
-}
-
-interface RCTPasteInputProps extends TextInputProps {
-    disableCopyPaste?: boolean;
-    mostRecentEventCount: number;
-    onPaste(event: PasteEvent): void;
-}
-
-export interface PasteInputRef {
-    clear(): void;
-    isFocused(): boolean;
-    focus(): void;
-    blur(): void;
-    setNativeProps(nativeProps: object): void;
-}
-
-interface TextInputNativeCommands {
-    focus: (viewRef: unknown) => void;
-    blur: (viewRef: unknown) => void;
-    setTextAndSelection: (
-        viewRef: unknown,
-        mostRecentEventCount: number,
-        value: string | null, // in theory this is nullable
-        start: number,
-        end: number
-    ) => void;
-}
-
-interface Selection {
-    start: number;
-    end?: number | undefined;
-}
+import type {
+    PasteEvent,
+    PasteInputProps,
+    RCTPasteInputProps,
+    Selection,
+    TextInputNativeCommands,
+} from './types';
 
 const RCTPasteInput = requireNativeComponent<RCTPasteInputProps>('PasteInput');
 
@@ -104,15 +58,8 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
             ? props.defaultValue
             : '';
 
-    let viewCommands: TextInputNativeCommands;
-    if (Platform.OS === 'android') {
-        viewCommands =
-            require('react-native/Libraries/Components/TextInput/AndroidTextInputNativeComponent').Commands;
-    } else {
-        viewCommands =
-            require('react-native/Libraries/Components/TextInput/RCTMultilineTextInputNativeComponent').Commands;
-    }
-
+    const viewCommands: TextInputNativeCommands =
+        require('react-native/Libraries/Components/TextInput/RCTMultilineTextInputNativeComponent').Commands;
     const lastNativeSelection = lastNativeSelectionState.selection;
     const lastNativeSelectionEventCount =
         lastNativeSelectionState.mostRecentEventCount;
