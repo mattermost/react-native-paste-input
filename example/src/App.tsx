@@ -42,7 +42,7 @@ export default function App() {
                 keyboardType="default"
                 disableFullscreenUI={true}
                 textContentType="none"
-                autoCompleteType="off"
+                autoComplete="off"
             />
         </View>
     );
