@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "react": "17.0.2",
-    "react-native": "0.66.3"
+    "react-native": "0.66.4"
   },
   "devDependencies": {
-    "@babel/runtime": "7.16.3",
+    "@babel/runtime": "7.16.7",
     "babel-plugin-module-resolver": "4.1.0",
     "metro-react-native-babel-preset": "0.66.2"
   }
