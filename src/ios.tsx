@@ -1,6 +1,5 @@
 import React, {
     forwardRef,
-    useCallback,
     useEffect,
     useImperativeHandle,
     useMemo,
@@ -10,12 +9,12 @@ import React, {
 import {
     requireNativeComponent,
     TouchableWithoutFeedback,
-    HostComponent,
     NativeSyntheticEvent,
     TextInputChangeEventData,
     TextInputSelectionChangeEventData,
     TextInputFocusEventData,
     TextInputScrollEventData,
+    TextInput,
 } from 'react-native';
 import TextInputState from 'react-native/Libraries/Components/TextInput/TextInputState';
 import TextAncestor from 'react-native/Libraries/Text/TextAncestor';
@@ -42,7 +41,7 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
         [props.selection]
     );
 
-    const inputRef = useRef<null | React.ElementRef<HostComponent<any>>>(null);
+    const inputRef = useRef<null | TextInput>(null);
     const [mostRecentEventCount, setMostRecentEventCount] = useState<number>(0);
     const [lastNativeText, setLastNativeText] = useState<
         string | null | undefined
@@ -126,50 +125,17 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
                 TextInputState.unregisterInput(inputRefValue);
             }
         };
-    }, [inputRef]);
+    }, []);
 
     useEffect(() => {
         const inputRefValue = inputRef.current;
         // When unmounting we need to blur the input
         return () => {
-            if (isFocused()) {
-                inputRefValue?.blur();
-            }
+            inputRefValue?.blur();
         };
-    }, [inputRef]);
+    }, []);
 
-    const clear = useCallback(() => {
-        if (inputRef.current != null) {
-            viewCommands.setTextAndSelection(
-                inputRef.current,
-                mostRecentEventCount,
-                '',
-                0,
-                0
-            );
-        }
-    }, [mostRecentEventCount, viewCommands]);
-
-    useImperativeHandle(
-        ref,
-        () => ({
-            clear,
-            isFocused,
-            focus: () => inputRef.current?.focus(),
-            blur: () => inputRef.current?.blur(),
-            setNativeProps: inputRef.current?.setNativeProps,
-            ...(inputRef.current || {}),
-        }),
-        [clear]
-    );
-
-    function isFocused(): boolean {
-        if (!inputRef.current) {
-            return false;
-        }
-
-        return TextInputState.currentlyFocusedInput() === inputRef.current;
-    }
+    useImperativeHandle(ref, () => inputRef.current);
 
     const _onBlur = (event: NativeSyntheticEvent<TextInputFocusEventData>) => {
         TextInputState.blurInput(inputRef.current);
@@ -213,12 +179,6 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
         }
     };
 
-    const _onPress = () => {
-        if ((props.editable || props.editable === undefined) && !isFocused()) {
-            inputRef.current?.focus();
-        }
-    };
-
     const _onScroll = (
         event: NativeSyntheticEvent<TextInputScrollEventData>
     ) => {
@@ -246,7 +206,6 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
         <TextAncestor.Provider value={true}>
             <TouchableWithoutFeedback
                 onLayout={props.onLayout}
-                onPress={_onPress}
                 onPressIn={props.onPressIn}
                 onPressOut={props.onPressOut}
                 accessible={props.accessible}
@@ -271,6 +230,7 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
                     selection={selection}
                     style={[props.style]}
                     textBreakStrategy={props.textBreakStrategy}
+                    //@ts-ignore
                     ref={inputRef}
                 />
             </TouchableWithoutFeedback>
