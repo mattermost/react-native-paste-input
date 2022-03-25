@@ -8,7 +8,7 @@
 
 import * as React from 'react';
 
-import DeprecatedTextInputPropTypes from 'react-native/Libraries/DeprecatedPropTypes/DeprecatedTextInputPropTypes';
+import { TextPropTypes } from 'deprecated-react-native-prop-types';
 
 import Platform from 'react-native/Libraries/Utilities/Platform';
 import Text from 'react-native/Libraries/Text/Text';
@@ -360,7 +360,7 @@ const ExportedForwardRef = React.forwardRef(function TextInput(
 });
 
 // TODO: Deprecate this
-ExportedForwardRef.propTypes = DeprecatedTextInputPropTypes;
+ExportedForwardRef.propTypes = TextPropTypes;
 
 // $FlowFixMe[prop-missing]
 ExportedForwardRef.State = {
