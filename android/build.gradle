@@ -3,8 +3,9 @@ buildscript {
   def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['PasteInput_kotlinVersion']
 
   repositories {
+    mavenCentral()
+    mavenLocal()
     google()
-    jcenter()
   }
 
   dependencies {
@@ -53,7 +54,7 @@ android {
 
 repositories {
   mavenCentral()
-  jcenter()
+  mavenLocal()
   google()
 
   def found = false
