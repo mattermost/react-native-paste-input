@@ -1,3 +1,7 @@
+import groovy.json.JsonSlurper
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
 buildscript {
   // Buildscript is evaluated before everything else so we can't use getExtOrDefault
   def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['PasteInput_kotlinVersion']
@@ -9,14 +13,11 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:4.2.1'
+    classpath 'com.android.tools.build:gradle:7.1.1'
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
 }
-
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
 
 def getExtOrDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['PasteInput_' + name]
@@ -24,6 +25,32 @@ def getExtOrDefault(name) {
 
 def getExtOrIntegerDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['PasteInput_' + name]).toInteger()
+}
+
+Object findReactNativePackageJson() {
+    def searchPath = 'node_modules/react-native/package.json'
+    def projectDir = project.projectDir.toString() + '/'
+    def rnPackageJsonFile = new File(projectDir + searchPath)
+    while (!rnPackageJsonFile.exists()) {
+        searchPath = '../' + searchPath
+        rnPackageJsonFile = new File(projectDir + searchPath)
+    }
+    return rnPackageJsonFile
+}
+
+String resolveFlavor() {
+    def packageSlurper = new JsonSlurper()
+    def rnPackageJsonFile = findReactNativePackageJson()
+    def reactNativePackageJson = packageSlurper.parseText(rnPackageJsonFile.text)
+    def reactNativeVersion = reactNativePackageJson.version
+
+    List versionComponents = reactNativeVersion.tokenize('.')
+
+    if (versionComponents[1].toInteger() >= 69) {
+        return "reactNative69"
+    } else {
+        return "reactNative68"
+    }
 }
 
 android {
@@ -50,6 +77,24 @@ android {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
   }
+
+  flavorDimensions "reactNativeVersion"
+    productFlavors {
+        reactNative69 {
+            dimension "reactNativeVersion"
+        }
+        reactNative68 {
+            dimension "reactNativeVersion"
+        }
+    }
+
+    def flavor = resolveFlavor()
+    variantFilter { variant ->
+        def names = variant.flavors*.name
+        if (!names.contains(flavor)) {
+            setIgnore(true)
+        }
+    }
 }
 
 repositories {
