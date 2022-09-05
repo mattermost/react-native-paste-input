@@ -134,6 +134,18 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
             inputRefValue?.blur();
         };
     }, []);
+  
+    if (inputRef.current) {
+        inputRef.current.clear = function() {
+            viewCommands.setTextAndSelection(
+              inputRef.current,
+              mostRecentEventCount,
+              '',
+              0,
+              0,
+            );
+        }
+    }
 
     useImperativeHandle(ref, () => inputRef.current);
 
