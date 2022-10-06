@@ -1,10 +1,4 @@
-import React, {
-    forwardRef,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import {
     requireNativeComponent,
     TouchableWithoutFeedback,
@@ -158,7 +152,7 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
 
     const _setNativeRef = setAndForwardRef({
         getForwardedRef: () => ref,
-        setLocalRef: (localRef) => {
+        setLocalRef: (localRef: any) => {
             inputRef.current = localRef;
 
             /*
