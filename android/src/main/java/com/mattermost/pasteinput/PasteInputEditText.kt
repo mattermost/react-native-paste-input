@@ -21,11 +21,8 @@ class PasteInputEditText(context: ThemedReactContext) : ReactEditText(context) {
     return mOnPasteListener
   }
 
-  override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection? {
+  override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection {
     val ic = super.onCreateInputConnection(outAttrs)
-    if (ic == null) {
-      return null
-    }
 
     EditorInfoCompat.setContentMimeTypes(outAttrs, arrayOf<String>("*/*"))
 
@@ -44,6 +41,6 @@ class PasteInputEditText(context: ThemedReactContext) : ReactEditText(context) {
       true
     }
 
-    return InputConnectionCompat.createWrapper(ic, outAttrs, callback)
+    return InputConnectionCompat.createWrapper(ic!!, outAttrs, callback)
   }
 }
