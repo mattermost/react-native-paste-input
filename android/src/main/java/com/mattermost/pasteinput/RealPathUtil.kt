@@ -106,7 +106,7 @@ object RealPathUtil {
       val returnCursor = context.contentResolver.query(uri, null, null, null, null)
       val nameIndex = returnCursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME)
       returnCursor?.moveToFirst()
-      fileName = nameIndex?.let { returnCursor?.getString(it) }
+      fileName = sanitizeFilename(nameIndex?.let { returnCursor?.getString(it) })
     }
     catch (e:Exception) {
       // just continue to get the filename with the last segment of the path
@@ -115,7 +115,7 @@ object RealPathUtil {
     {
       if (fileName == null)
       {
-        fileName = uri.lastPathSegment.toString().trim()
+        fileName = sanitizeFilename(uri.lastPathSegment.toString().trim())
       }
       val cacheDir = File(context.cacheDir, PasteInputManager.CACHE_DIR_NAME)
       if (!cacheDir.exists())
@@ -136,6 +136,15 @@ object RealPathUtil {
       return null
     }
     return tmpFile.absolutePath
+  }
+
+  private fun sanitizeFilename(filename: String?): String? {
+    if (filename == null) {
+      return null;
+    }
+
+    val f = File(filename);
+    return f.name;
   }
 
   private fun getDataColumn(context:Context, uri:Uri, selection:String,
