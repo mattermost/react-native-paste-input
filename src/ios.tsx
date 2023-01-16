@@ -12,6 +12,7 @@ import {
 import TextInputState from 'react-native/Libraries/Components/TextInput/TextInputState';
 import TextAncestor from 'react-native/Libraries/Text/TextAncestor';
 import setAndForwardRef from 'react-native/Libraries/Utilities/setAndForwardRef';
+import { getTextInputExtraProps } from './extra_props';
 
 import type {
     PasteEvent,
@@ -250,6 +251,9 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
         });
     };
 
+    const extraProps = getTextInputExtraProps(props);
+    const smartPuntuation = props.smartPunctuation || 'default';
+
     return (
         <TextAncestor.Provider value={true}>
             <TouchableWithoutFeedback
@@ -264,6 +268,7 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
             >
                 <RCTPasteInput
                     {...props}
+                    {...extraProps}
                     autoCapitalize={props.autoCapitalize || 'sentences'}
                     dataDetectorTypes={props.dataDetectorTypes}
                     disableFullscreenUI={props.disableFullscreenUI}
@@ -276,6 +281,7 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
                     onScroll={_onScroll}
                     onSelectionChange={_onSelectionChange}
                     selection={selection}
+                    smartPunctuation={smartPuntuation}
                     style={[props.style]}
                     textBreakStrategy={props.textBreakStrategy}
                     //@ts-ignore

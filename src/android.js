@@ -20,6 +20,8 @@ import setAndForwardRef from 'react-native/Libraries/Utilities/setAndForwardRef'
 
 import usePressability from 'react-native/Libraries/Pressability/usePressability';
 
+import { getTextInputExtraProps } from './extra_props';
+
 const { useLayoutEffect, useRef, useState } = React;
 
 let AndroidTextInput;
@@ -244,9 +246,7 @@ function InternalTextInput(props) {
 
     let textInput = null;
 
-    // The default value for `blurOnSubmit` is true for single-line fields and
-    // false for multi-line fields.
-    const blurOnSubmit = props.blurOnSubmit ?? !props.multiline;
+    const extraProps = getTextInputExtraProps(props);
 
     const accessible = props.accessible !== false;
     const focusable = props.focusable !== false;
@@ -306,10 +306,10 @@ function InternalTextInput(props) {
         <AndroidTextInput
             ref={_setNativeRef}
             {...props}
+            {...extraProps}
             {...eventHandlers}
             accessible={accessible}
             autoCapitalize={autoCapitalize}
-            blurOnSubmit={blurOnSubmit}
             caretHidden={caretHidden}
             children={children}
             disableFullscreenUI={props.disableFullscreenUI}

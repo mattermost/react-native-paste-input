@@ -74,7 +74,7 @@ let AndroidTextInputNativeComponent = NativeComponentRegistry.get(
                 process: require('react-native/Libraries/StyleSheet/processColor'),
             },
             textDecorationLine: true,
-            blurOnSubmit: true,
+            submitBehavior: 'blurAndSubmit',
             textAlignVertical: true,
             fontStyle: true,
             textShadowOffset: true,

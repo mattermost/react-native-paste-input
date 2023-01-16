@@ -19,6 +19,7 @@ export interface PasteEvent {
 export interface PasteInputProps extends TextInputProps {
     disableCopyPaste?: boolean;
     onPaste(error: string | null | undefined, files: Array<PastedFile>): void;
+    submitBehavior?: SubmitBehavior;
 }
 
 export interface RCTPasteInputProps extends TextInputProps {
@@ -51,3 +52,5 @@ export interface Selection {
     start: number;
     end?: number | undefined;
 }
+
+export type SubmitBehavior = 'submit' | 'blurAndSubmit' | 'newline';

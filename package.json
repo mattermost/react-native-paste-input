@@ -50,31 +50,33 @@
     "url": "https://github.com/mattermost/react-native-paste-input/issues"
   },
   "homepage": "https://github.com/mattermost/react-native-paste-input#readme",
+  "dependencies": {
+    "semver": "7.3.8"
+  },
   "devDependencies": {
-    "@commitlint/config-conventional": "17.3.0",
+    "@commitlint/config-conventional": "17.4.2",
     "@react-native-community/bob": "0.17.1",
     "@react-native-community/eslint-config": "3.2.0",
     "@release-it/conventional-changelog": "5.1.1",
-    "@types/jest": "29.2.4",
+    "@types/jest": "29.2.5",
     "@types/react": "18.0.26",
-    "@types/react-native": "0.70.7",
-    "@typescript-eslint/eslint-plugin": "5.45.0",
-    "@typescript-eslint/parser": "5.45.0",
-    "commitlint": "17.3.0",
-    "eslint": "8.29.0",
-    "eslint-config-prettier": "8.5.0",
+    "@typescript-eslint/eslint-plugin": "5.48.1",
+    "@typescript-eslint/parser": "5.48.1",
+    "commitlint": "17.4.2",
+    "eslint": "8.32.0",
+    "eslint-config-prettier": "8.6.0",
     "eslint-plugin-flowtype": "8.0.3",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-react-native": "4.0.0",
-    "husky": "8.0.2",
+    "husky": "8.0.3",
     "jest": "29.3.1",
     "pod-install": "0.1.38",
-    "prettier": "2.8.0",
-    "react": "18.1.0",
-    "react-native": "0.70.6",
-    "release-it": "15.5.1",
-    "typescript": "4.9.3"
+    "prettier": "2.8.3",
+    "react": "18.2.0",
+    "react-native": "0.71.0",
+    "release-it": "15.6.0",
+    "typescript": "4.9.4"
   },
   "peerDependencies": {
     "react": "*",
@@ -147,8 +149,5 @@
       "module",
       "typescript"
     ]
-  },
-  "dependencies": {
-    "deprecated-react-native-prop-types": "^2.3.0"
   }
 }
