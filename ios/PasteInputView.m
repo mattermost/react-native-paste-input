@@ -41,6 +41,21 @@
     _backedTextInputView.onPaste = onPaste;
 }
 
+- (void)setSmartPunctuation:(NSString *)smartPunctuation {
+    if ([smartPunctuation isEqualToString:@"enable"]) {
+        [_backedTextInputView setSmartDashesType:UITextSmartDashesTypeYes];
+        [_backedTextInputView setSmartQuotesType:UITextSmartQuotesTypeYes];
+        [_backedTextInputView setSmartInsertDeleteType:UITextSmartInsertDeleteTypeYes];
+    } else if ([smartPunctuation isEqualToString:@"disable"]) {
+        [_backedTextInputView setSmartDashesType:UITextSmartDashesTypeNo];
+        [_backedTextInputView setSmartQuotesType:UITextSmartQuotesTypeNo];
+        [_backedTextInputView setSmartInsertDeleteType:UITextSmartInsertDeleteTypeNo];
+    } else {
+        [_backedTextInputView setSmartDashesType:UITextSmartDashesTypeDefault];
+        [_backedTextInputView setSmartQuotesType:UITextSmartQuotesTypeDefault];
+        [_backedTextInputView setSmartInsertDeleteType:UITextSmartInsertDeleteTypeDefault];
+    }
+}
 
 #pragma mark - UIScrollViewDelegate
 

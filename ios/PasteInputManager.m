@@ -20,7 +20,7 @@ RCT_EXPORT_MODULE(PasteInput)
 
 RCT_EXPORT_VIEW_PROPERTY(disableCopyPaste, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(onPaste, RCTBubblingEventBlock)
-
+RCT_EXPORT_VIEW_PROPERTY(smartPunctuation, NSString*)
 
 
 @end
