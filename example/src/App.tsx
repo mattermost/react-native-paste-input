@@ -37,12 +37,13 @@ export default function App() {
                 onPaste={onPaste}
                 style={styles.input}
                 multiline={true}
-                blurOnSubmit={false}
+                submitBehavior="newline"
                 underlineColorAndroid="transparent"
                 keyboardType="default"
                 disableFullscreenUI={true}
                 textContentType="none"
                 autoComplete="off"
+                smartPunctuation="disable"
             />
         </View>
     );

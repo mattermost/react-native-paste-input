@@ -12,6 +12,11 @@ import java.lang.Exception
 
 class PasteInputEditText(context: ThemedReactContext) : ReactEditText(context) {
   private lateinit var mOnPasteListener: IPasteInputListener
+  private var mDisabledCopyPaste: Boolean = false
+
+  fun setDisableCopyPaste(disabled: Boolean) {
+    this.mDisabledCopyPaste = disabled
+  }
 
   fun setOnPasteListener(listener: IPasteInputListener) {
     mOnPasteListener = listener
@@ -36,7 +41,9 @@ class PasteInputEditText(context: ThemedReactContext) : ReactEditText(context) {
         }
       }
 
-      getOnPasteListener().onPaste(inputContentInfo.contentUri)
+      if (!mDisabledCopyPaste) {
+        getOnPasteListener().onPaste(inputContentInfo.contentUri)
+      }
 
       true
     }

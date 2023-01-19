@@ -31,6 +31,7 @@ class PasteInputManager(reactContext: ReactContext) : ReactTextInputManager() {
      disableCopyPaste = disabled
      editText.customInsertionActionModeCallback = PasteInputActionCallback(editText, disabled)
      editText.customSelectionActionModeCallback = PasteInputActionCallback(editText, disabled)
+     editText.setDisableCopyPaste(disabled)
    }
 
   @RequiresApi(Build.VERSION_CODES.M)
@@ -53,7 +54,6 @@ class PasteInputManager(reactContext: ReactContext) : ReactTextInputManager() {
      pasteInputEditText.setOnPasteListener(PasteInputListener(pasteInputEditText))
    }
 
-   @Nullable
    override fun getExportedCustomBubblingEventTypeConstants(): MutableMap<String, Any> {
      val map = super.getExportedCustomBubblingEventTypeConstants()!!
      map.put(

@@ -18,9 +18,6 @@
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
   if (self = [super initWithBridge:bridge]) {
-    // `blurOnSubmit` defaults to `false` for <TextInput multiline={true}> by design.
-    self.blurOnSubmit = NO;
-
     _backedTextInputView = [[PasteInputTextView alloc] initWithFrame:self.bounds];
     _backedTextInputView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _backedTextInputView.textInputDelegate = self;
@@ -44,6 +41,21 @@
     _backedTextInputView.onPaste = onPaste;
 }
 
+- (void)setSmartPunctuation:(NSString *)smartPunctuation {
+    if ([smartPunctuation isEqualToString:@"enable"]) {
+        [_backedTextInputView setSmartDashesType:UITextSmartDashesTypeYes];
+        [_backedTextInputView setSmartQuotesType:UITextSmartQuotesTypeYes];
+        [_backedTextInputView setSmartInsertDeleteType:UITextSmartInsertDeleteTypeYes];
+    } else if ([smartPunctuation isEqualToString:@"disable"]) {
+        [_backedTextInputView setSmartDashesType:UITextSmartDashesTypeNo];
+        [_backedTextInputView setSmartQuotesType:UITextSmartQuotesTypeNo];
+        [_backedTextInputView setSmartInsertDeleteType:UITextSmartInsertDeleteTypeNo];
+    } else {
+        [_backedTextInputView setSmartDashesType:UITextSmartDashesTypeDefault];
+        [_backedTextInputView setSmartQuotesType:UITextSmartQuotesTypeDefault];
+        [_backedTextInputView setSmartInsertDeleteType:UITextSmartInsertDeleteTypeDefault];
+    }
+}
 
 #pragma mark - UIScrollViewDelegate
 

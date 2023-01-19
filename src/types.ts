@@ -19,12 +19,15 @@ export interface PasteEvent {
 export interface PasteInputProps extends TextInputProps {
     disableCopyPaste?: boolean;
     onPaste(error: string | null | undefined, files: Array<PastedFile>): void;
+    submitBehavior?: SubmitBehavior;
+    smartPunctuation?: SmartPunctuation;
 }
 
 export interface RCTPasteInputProps extends TextInputProps {
     disableCopyPaste?: boolean;
     mostRecentEventCount: number;
     onPaste(event: PasteEvent): void;
+    smartPunctuation?: SmartPunctuation;
 }
 
 export interface PasteInputRef {
@@ -51,3 +54,6 @@ export interface Selection {
     start: number;
     end?: number | undefined;
 }
+
+export type SubmitBehavior = 'submit' | 'blurAndSubmit' | 'newline';
+export type SmartPunctuation = 'default' | 'enable' | 'disable';
