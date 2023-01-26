@@ -40,7 +40,7 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
     const [mostRecentEventCount, setMostRecentEventCount] = useState<number>(0);
     const [lastNativeText, setLastNativeText] = useState<
         string | null | undefined
-    >(props.value);
+    >(null);
     const [lastNativeSelectionState, setLastNativeSelection] = useState<{
         selection?: Selection;
         mostRecentEventCount: number;

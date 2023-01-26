@@ -43,7 +43,7 @@ function InternalTextInput(props) {
 
     const [mostRecentEventCount, setMostRecentEventCount] = useState(0);
 
-    const [lastNativeText, setLastNativeText] = useState(props.value);
+    const [lastNativeText, setLastNativeText] = useState(null);
     const [lastNativeSelectionState, setLastNativeSelection] = useState({
         selection,
         mostRecentEventCount,
