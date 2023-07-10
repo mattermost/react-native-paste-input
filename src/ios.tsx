@@ -142,6 +142,12 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
         }
     }
 
+    function blur() {
+        if (inputRef.current != null) {
+            viewCommands.blur(inputRef.current);
+        }
+    }
+
     // TODO: Fix this returning true on null === null, when no input is focused
     function isFocused() {
         return TextInputState.currentlyFocusedInput() === inputRef.current;
@@ -179,6 +185,7 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
            before we can get to the long term breaking change.
          */
             if (localRef) {
+                localRef.blur = blur;
                 localRef.clear = clear;
                 localRef.isFocused = isFocused;
                 localRef.getNativeRef = getNativeRef;

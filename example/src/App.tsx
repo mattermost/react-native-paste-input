@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View, Button } from 'react-native';
 import PasteInput, {
     PastedFile,
     PasteInputRef,
@@ -10,6 +10,7 @@ import Details from './Details';
 export default function App() {
     const inputRef = useRef<PasteInputRef>(null);
     const [file, setFile] = useState<PastedFile>();
+    const [inputVisible, setInputVisible] = useState<boolean>(true);
 
     const onPaste = (
         error: string | null | undefined,
@@ -22,6 +23,10 @@ export default function App() {
         }
     };
 
+    const toggleInputVisibility = () => {
+        setInputVisible(!inputVisible);
+    };
+
     // React.useEffect(() => {
     //     requestAnimationFrame(() => {
     //         inputRef.current?.focus();
@@ -31,19 +36,25 @@ export default function App() {
     return (
         <View style={styles.container}>
             <Details file={file} />
-            <PasteInput
-                ref={inputRef}
-                disableCopyPaste={false}
-                onPaste={onPaste}
-                style={styles.input}
-                multiline={true}
-                submitBehavior="newline"
-                underlineColorAndroid="transparent"
-                keyboardType="default"
-                disableFullscreenUI={true}
-                textContentType="none"
-                autoComplete="off"
-                smartPunctuation="disable"
+            {inputVisible && (
+                <PasteInput
+                    ref={inputRef}
+                    disableCopyPaste={false}
+                    onPaste={onPaste}
+                    style={styles.input}
+                    multiline={true}
+                    submitBehavior="newline"
+                    underlineColorAndroid="transparent"
+                    keyboardType="default"
+                    disableFullscreenUI={true}
+                    textContentType="none"
+                    autoComplete="off"
+                    smartPunctuation="disable"
+                />
+            )}
+            <Button
+                title={inputVisible ? 'Hide Input' : 'Show Input'}
+                onPress={toggleInputVisibility}
             />
         </View>
     );
