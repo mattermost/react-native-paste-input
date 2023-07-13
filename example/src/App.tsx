@@ -1,5 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { Platform, StyleSheet, View, Button } from 'react-native';
+import {
+    Platform,
+    StyleSheet,
+    View,
+    Button,
+    Text,
+    TextInput,
+} from 'react-native';
 import PasteInput, {
     PastedFile,
     PasteInputRef,
@@ -11,6 +18,7 @@ export default function App() {
     const inputRef = useRef<PasteInputRef>(null);
     const [file, setFile] = useState<PastedFile>();
     const [inputVisible, setInputVisible] = useState<boolean>(true);
+    const [focused, setFocused] = useState(false);
 
     const onPaste = (
         error: string | null | undefined,
@@ -36,6 +44,7 @@ export default function App() {
     return (
         <View style={styles.container}>
             <Details file={file} />
+            <TextInput style={styles.input} placeholder="This is a TextInput" />
             {inputVisible && (
                 <PasteInput
                     ref={inputRef}
@@ -43,6 +52,7 @@ export default function App() {
                     onPaste={onPaste}
                     style={styles.input}
                     multiline={true}
+                    placeholder="This is a PasteInput"
                     submitBehavior="newline"
                     underlineColorAndroid="transparent"
                     keyboardType="default"
@@ -50,12 +60,20 @@ export default function App() {
                     textContentType="none"
                     autoComplete="off"
                     smartPunctuation="disable"
+                    onBlur={() => {
+                        setFocused(false);
+                    }}
+                    onFocus={() => {
+                        setFocused(true);
+                    }}
                 />
             )}
             <Button
                 title={inputVisible ? 'Hide Input' : 'Show Input'}
                 onPress={toggleInputVisibility}
             />
+
+            <Text>Is PasteInput focused: {String(focused)}</Text>
         </View>
     );
 }
