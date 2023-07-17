@@ -16,10 +16,10 @@ import TextAncestor from 'react-native/Libraries/Text/TextAncestor';
 import TextInputState from 'react-native/Libraries/Components/TextInput/TextInputState';
 import invariant from 'invariant';
 import nullthrows from 'nullthrows';
-import setAndForwardRef from 'react-native/Libraries/Utilities/setAndForwardRef';
 
 import usePressability from 'react-native/Libraries/Pressability/usePressability';
 
+import setAndForwardRef from './setAndForwardRef';
 import { getTextInputExtraProps } from './extra_props';
 
 const { useLayoutEffect, useRef, useState } = React;
