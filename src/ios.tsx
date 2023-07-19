@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import TextInputState from 'react-native/Libraries/Components/TextInput/TextInputState';
 import TextAncestor from 'react-native/Libraries/Text/TextAncestor';
-import setAndForwardRef from 'react-native/Libraries/Utilities/setAndForwardRef';
+import setAndForwardRef from './setAndForwardRef';
 import { getTextInputExtraProps } from './extra_props';
 
 import type {
