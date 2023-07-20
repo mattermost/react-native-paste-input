@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import PasteInput, {
-    PastedFile,
-    PasteInputRef,
+    type PastedFile,
+    type PasteInputRef,
 } from '@mattermost/react-native-paste-input';
 
 import Details from './Details';
