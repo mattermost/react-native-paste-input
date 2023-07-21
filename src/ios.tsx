@@ -2,16 +2,16 @@ import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import {
     requireNativeComponent,
     TouchableWithoutFeedback,
-    NativeSyntheticEvent,
-    TextInputChangeEventData,
-    TextInputSelectionChangeEventData,
-    TextInputFocusEventData,
-    TextInputScrollEventData,
+    type NativeSyntheticEvent,
+    type TextInputChangeEventData,
+    type TextInputSelectionChangeEventData,
+    type TextInputFocusEventData,
+    type TextInputScrollEventData,
     TextInput,
 } from 'react-native';
 import TextInputState from 'react-native/Libraries/Components/TextInput/TextInputState';
 import TextAncestor from 'react-native/Libraries/Text/TextAncestor';
-import setAndForwardRef from 'react-native/Libraries/Utilities/setAndForwardRef';
+import setAndForwardRef from './setAndForwardRef';
 import { getTextInputExtraProps } from './extra_props';
 
 import type {
