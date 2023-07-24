@@ -1,6 +1,6 @@
 {
   "name": "@mattermost/react-native-paste-input",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "React Native TextInput replacement to allow pasting files",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
