@@ -1,4 +1,11 @@
-import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+    forwardRef,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import {
     requireNativeComponent,
     TouchableWithoutFeedback,
@@ -13,6 +20,7 @@ import TextInputState from 'react-native/Libraries/Components/TextInput/TextInpu
 import TextAncestor from 'react-native/Libraries/Text/TextAncestor';
 import setAndForwardRef from './setAndForwardRef';
 import { getTextInputExtraProps } from './extra_props';
+import nullthrows from 'nullthrows';
 
 import type {
     PasteEvent,
@@ -108,27 +116,23 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
         viewCommands,
     ]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const inputRefValue = inputRef.current;
 
         if (inputRefValue != null) {
             TextInputState.registerInput(inputRefValue);
+
+            return () => {
+                TextInputState.unregisterInput(inputRefValue);
+
+                if (TextInputState.currentlyFocusedInput() === inputRefValue) {
+                    nullthrows(inputRefValue).blur();
+                }
+            };
         }
 
-        return () => {
-            if (inputRefValue != null) {
-                TextInputState.unregisterInput(inputRefValue);
-            }
-        };
-    }, []);
-
-    useEffect(() => {
-        const inputRefValue = inputRef.current;
-        // When unmounting we need to blur the input
-        return () => {
-            inputRefValue?.blur();
-        };
-    }, []);
+        return;
+    }, [inputRef]);
 
     function clear() {
         if (inputRef.current != null) {
