@@ -8,7 +8,7 @@
 
 #import "UIPasteboard+GetImageInfo.h"
 #import "NSData+MimeType.h"
-#import "react_native_paste_input-Swift.h"
+#import "react_native_paste_input/react_native_paste_input-Swift.h"
 #import "UIImage+vImageScaling.h"
 
 @implementation UIPasteboard (GetImageInfo)
@@ -25,18 +25,18 @@
       }
 
       NSString *type = item.allKeys[j];
-    
+
 
       @try {
         NSString *uri = self.string;
         NSData *fileData = item[type];
-        
+
         if ([type isEqual:@"public.jpeg"] || [type isEqual:@"public.heic"] || [type isEqual:@"public.png"]) {
           fileData = [self getDataForImageItem:item[type] type:type];
         } else if ([type isEqual:@"com.compuserve.gif"]) {
           fileData = [self dataForPasteboardType:type];
         }
-        
+
         SwimeProxy *swimeProxy = [SwimeProxy shared];
         MimeTypeProxy *mimeProxy = [swimeProxy getMimeAndExtensionWithData:fileData uti:type];
         NSString *extension;
@@ -48,11 +48,11 @@
           extension = [fileData extension];
           mimeType = [fileData mimeType];
         }
-        
+
         if ([extension length] == 0) {
           continue;
         }
-        
+
         NSString *tempFilename = [NSString stringWithFormat:@"%@.%@", [[NSProcessInfo processInfo] globallyUniqueString], extension];
         NSURL *tempFileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:tempFilename]];
         BOOL success = [fileData writeToURL:tempFileURL atomically:YES];
@@ -74,7 +74,7 @@
       }
     }
   }
-  
+
   return fileInfos;
 }
 
@@ -93,11 +93,11 @@
   if (width > 6048 || height > 4032) {
     image = [image vImageScaledImageWithSize:CGSizeMake(2048, 2048) contentMode:UIViewContentModeScaleAspectFit];
   }
-  
+
   if ([type isEqual:@"public.png"]) {
     return UIImagePNGRepresentation(image);
   }
-  
+
   return UIImageJPEGRepresentation(image, 1.0);
 }
 
