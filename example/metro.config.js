@@ -1,3 +1,14 @@
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
+/**
+ * Metro configuration
+ * https://facebook.github.io/metro/docs/configuration
+ *
+ * @type {import('metro-config').MetroConfig}
+ */
+
+const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 const path = require('path');
 const exclusionList = require('metro-config/src/defaults/exclusionList');
 const escape = require('escape-string-regexp');
@@ -9,7 +20,7 @@ const modules = Object.keys({
     ...pak.peerDependencies,
 });
 
-module.exports = {
+const config = {
     projectRoot: __dirname,
     watchFolders: [root],
 
@@ -40,3 +51,5 @@ module.exports = {
         }),
     },
 };
+
+module.exports = mergeConfig(getDefaultConfig(root), config);

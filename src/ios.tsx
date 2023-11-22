@@ -57,8 +57,8 @@ const PasteInput = forwardRef((props: PasteInputProps, ref) => {
         typeof props.value === 'string'
             ? props.value
             : typeof props.defaultValue === 'string'
-            ? props.defaultValue
-            : '';
+              ? props.defaultValue
+              : '';
 
     const viewCommands: TextInputNativeCommands =
         require('react-native/Libraries/Components/TextInput/RCTMultilineTextInputNativeComponent').Commands;
