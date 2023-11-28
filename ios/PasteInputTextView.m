@@ -22,21 +22,21 @@
     action == @selector(cut:) ||
     action == @selector(_share:);
 #pragma clang diagnostic pop
-    
+
     if (_disableCopyPaste && prevent) {
         return NO;
     }
-    
+
     if (action == @selector(paste:) && [UIPasteboard generalPasteboard].numberOfItems > 0) {
         return true;
     }
-    
+
     return [super canPerformAction:action withSender:sender];
 }
 
 -(void)paste:(id)sender {
     [super paste:sender];
-    
+
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
 
     BOOL hasStrings = pasteboard.hasStrings;
@@ -49,7 +49,7 @@
     if (pasteboard.hasURLs || hasStrings || pasteboard.hasColors) {
         return;
     }
-    
+
     if (_onPaste) {
         NSArray<NSDictionary *> *files = [pasteboard getCopiedFiles];
         if (files != nil && files.count > 0) {
@@ -60,9 +60,9 @@
             return;
         }
     }
-    
+
     // Dismiss contextual menu
-    [self resignFirstResponder];
+    // [self resignFirstResponder];
 }
 
 @end
