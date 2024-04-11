@@ -29,7 +29,7 @@ class PasteInputEditText(context: ThemedReactContext) : ReactEditText(context) {
   override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection {
     val ic = super.onCreateInputConnection(outAttrs)
 
-    EditorInfoCompat.setContentMimeTypes(outAttrs, arrayOf<String>("*/*"))
+    EditorInfoCompat.setContentMimeTypes(outAttrs, arrayOf("image/gif", "image/jpg", "image/jpeg", "image/png", "image/webp", "image/*", "*/*"))
 
     val callback = InputConnectionCompat.OnCommitContentListener { inputContentInfo, flags, opts ->
       val lacksPermission = (flags and InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION) != 0
