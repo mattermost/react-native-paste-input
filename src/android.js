@@ -63,8 +63,8 @@ function InternalTextInput(props) {
         typeof props.value === 'string'
             ? props.value
             : typeof props.defaultValue === 'string'
-              ? props.defaultValue
-              : '';
+            ? props.defaultValue
+            : '';
 
     // This is necessary in case native updates the text and JS decides
     // that the update should be ignored and we should stick with the value
