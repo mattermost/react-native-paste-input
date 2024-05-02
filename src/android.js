@@ -8,8 +8,6 @@
 
 import * as React from 'react';
 
-import { TextPropTypes } from 'deprecated-react-native-prop-types';
-
 import Platform from 'react-native/Libraries/Utilities/Platform';
 import Text from 'react-native/Libraries/Text/Text';
 import TextAncestor from 'react-native/Libraries/Text/TextAncestor';
@@ -63,8 +61,8 @@ function InternalTextInput(props) {
         typeof props.value === 'string'
             ? props.value
             : typeof props.defaultValue === 'string'
-            ? props.defaultValue
-            : '';
+              ? props.defaultValue
+              : '';
 
     // This is necessary in case native updates the text and JS decides
     // that the update should be ignored and we should stick with the value
@@ -358,9 +356,6 @@ const ExportedForwardRef = React.forwardRef(function TextInput(
         />
     );
 });
-
-// TODO: Deprecate this
-ExportedForwardRef.propTypes = TextPropTypes;
 
 // $FlowFixMe[prop-missing]
 ExportedForwardRef.State = {

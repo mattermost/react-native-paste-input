@@ -15,9 +15,11 @@ Pod::Spec.new do |s|
   s.swift_version = '5.0'
 
   
-  s.source_files = "ios/**/*.{h,m,mm,swift}"
-  
+  s.source_files = "ios/**/*.{h,m,mm,swift,cpp}"
 
-  s.dependency "React-Core"
-  s.dependency 'Swime', '3.0.6'
+  if ENV["RCT_NEW_ARCH_ENABLED"] == nil || ENV["RCT_NEW_ARCH_ENABLED"] != "1"
+    s.exclude_files = "ios/PasteTextInputSpecs"
+  end
+
+  install_modules_dependencies(s)
 end

@@ -1,15 +1,26 @@
-import type { TextInputProps } from 'react-native';
+import type { ForwardedRef } from 'react';
+import type { HostComponent, TextInputProps } from 'react-native';
+import type { Int32 } from 'react-native/Libraries/Types/CodegenTypes';
+
+export type PasteTextInputInstance = React.ElementRef<
+    HostComponent<PasteInputProps>
+> & {
+    clear: () => void;
+    isFocused: () => boolean;
+    getNativeRef?: () => React.ElementRef<HostComponent<PasteInputProps>>;
+    setSelection: (start: number, end: number) => void;
+};
 
 export interface PastedFile {
     fileName: string;
-    fileSize: number;
+    fileSize: Int32;
     type: string;
     uri: string;
 }
 
 export interface PasteEvent {
     nativeEvent: {
-        data: Array<PastedFile>;
+        data: PastedFile[];
         error?: {
             message: string;
         };
@@ -17,6 +28,7 @@ export interface PasteEvent {
 }
 
 export interface PasteInputProps extends TextInputProps {
+    forwardedRef?: ForwardedRef<PasteTextInputInstance>;
     disableCopyPaste?: boolean;
     onPaste(error: string | null | undefined, files: Array<PastedFile>): void;
     submitBehavior?: SubmitBehavior;

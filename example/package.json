@@ -9,13 +9,14 @@
     "start": "react-native start"
   },
   "dependencies": {
+    "@mattermost/react-native-paste-input": "file://../",
     "react": "18.2.0",
-    "react-native": "0.73.6"
+    "react-native": "0.74.0"
   },
   "devDependencies": {
-    "@babel/runtime": "7.23.4",
-    "@react-native/babel-preset": "0.73.21",
-    "babel-plugin-module-resolver": "5.0.0"
+    "@babel/runtime": "7.24.4",
+    "@react-native/babel-preset": "0.74.81",
+    "babel-plugin-module-resolver": "5.0.2"
   },
   "engines": {
     "node": ">=18"
