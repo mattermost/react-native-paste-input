@@ -1,18 +1,18 @@
-package com.mattermost.pasteinput
+package com.mattermost.pasteinputtext
 
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
-import com.facebook.react.uimanager.events.RCTEventEmitter
+import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.views.textinput.ReactEditText
 import java.io.IOException
 import java.net.URL
 
-class PasteInputFileFromUrl(context: ReactContext, target: ReactEditText, uri: String): Runnable {
-  private val mContext = context
+class PasteInputFileFromUrl(target: ReactEditText, uri: String, surfaceId: Int, eventDispatcher: EventDispatcher?): Runnable {
   private val mTarget = target
   private val mUri = uri
+  private val mEventDispatcher = eventDispatcher
+  private val mSurfaceId = surfaceId
 
   override fun run() {
     var files: WritableArray? = null
@@ -45,7 +45,6 @@ class PasteInputFileFromUrl(context: ReactContext, target: ReactEditText, uri: S
     event.putArray("data", files)
     event.putMap("error", error)
 
-    mContext.getJSModule(RCTEventEmitter::class.java)
-      .receiveEvent(mTarget.id, "onPaste", event)
+    mEventDispatcher?.dispatchEvent(PasteTextInputPasteEvent(mSurfaceId, mTarget.id, event))
   }
 }

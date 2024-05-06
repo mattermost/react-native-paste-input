@@ -1,38 +1,34 @@
-package com.mattermost.pasteinput
+package com.mattermost.pasteinputtext
 
 import android.content.ClipboardManager
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import android.util.Patterns
 import android.webkit.MimeTypeMap
 import android.webkit.URLUtil
-import androidx.annotation.RequiresApi
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
-import com.facebook.react.uimanager.events.RCTEventEmitter
+import com.facebook.react.uimanager.events.EventDispatcher
 import java.io.FileNotFoundException
 
-class PasteInputListener(editText: PasteInputEditText) : IPasteInputListener {
-  val mEditText = editText
+class PasteInputListener(editText: PasteInputEditText, surfaceId: Int) : IPasteInputListener {
+  private val mEditText = editText
+  private val mSurfaceId = surfaceId
 
-  @RequiresApi(Build.VERSION_CODES.KITKAT)
-  override fun onPaste(itemUri: Uri) {
+  override fun onPaste(itemUri: Uri, eventDispatcher: EventDispatcher?) {
     val reactContext = mEditText.context as ReactContext
-    val uriMimeType = reactContext.contentResolver.getType(itemUri) ?: return
+    reactContext.contentResolver.getType(itemUri) ?: return
 
     var uriString: String = itemUri.toString()
-    var extension: String
-    var mimeType: String
-    var fileName: String
-    var fileSize: Long
+    val mimeType: String
+    val fileSize: Long
     var files: WritableArray? = null
     var error: WritableMap? = null
 
     // Special handle for Google docs
-    if (uriString.equals("content://com.google.android.apps.docs.editors.kix.editors.clipboard")) {
+    if (uriString == "content://com.google.android.apps.docs.editors.kix.editors.clipboard") {
       val clipboardManager = reactContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
       val clipData = clipboardManager.primaryClip ?: return
       val item = clipData.getItemAt(0) ?: return
@@ -44,15 +40,21 @@ class PasteInputListener(editText: PasteInputEditText) : IPasteInputListener {
         uriString = htmlText.substring(matcher.start(1), matcher.end())
       }
     } else if (uriString.startsWith("http")) {
-      val pastImageFromUrlThread = Thread(PasteInputFileFromUrl(reactContext, mEditText, uriString))
+      val pastImageFromUrlThread = Thread(PasteInputFileFromUrl(
+        mEditText,
+        uriString,
+        mSurfaceId,
+        eventDispatcher
+      ))
       pastImageFromUrlThread.start()
       return
+    } else {
+      uriString = RealPathUtil.getRealPathFromURI(reactContext, itemUri) ?: return
     }
 
-    uriString = RealPathUtil.getRealPathFromURI(reactContext, itemUri) ?: return
-    extension = MimeTypeMap.getFileExtensionFromUrl(uriString) ?: return
+    val extension: String = MimeTypeMap.getFileExtensionFromUrl(uriString) ?: return
     mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: return
-    fileName = URLUtil.guessFileName(uriString, null, mimeType)
+    val fileName: String = URLUtil.guessFileName(uriString, null, mimeType)
 
     try {
       val contentResolver = reactContext.contentResolver
@@ -67,6 +69,7 @@ class PasteInputListener(editText: PasteInputEditText) : IPasteInputListener {
       file.putString("uri", "file://$uriString")
 
       files.pushMap(file)
+      assetFileDescriptor.close()
     } catch (e: FileNotFoundException) {
       error = Arguments.createMap()
       error.putString("message", e.localizedMessage)
@@ -76,7 +79,6 @@ class PasteInputListener(editText: PasteInputEditText) : IPasteInputListener {
     event.putArray("data", files)
     event.putMap("error", error)
 
-    reactContext.getJSModule(RCTEventEmitter::class.java)
-      .receiveEvent(mEditText.id, "onPaste", event)
+    eventDispatcher?.dispatchEvent(PasteTextInputPasteEvent(mSurfaceId, mEditText.id, event))
   }
 }
