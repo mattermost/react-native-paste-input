@@ -8,7 +8,11 @@
 
 #import "UIPasteboard+GetImageInfo.h"
 #import "NSData+MimeType.h"
+#if __has_include("react_native_paste_input/react_native_paste_input-Swift.h")
+#import "react_native_paste_input/react_native_paste_input-Swift.h"
+#else
 #import "react_native_paste_input-Swift.h"
+#endif
 #import "UIImage+vImageScaling.h"
 
 @implementation UIPasteboard (GetImageInfo)
