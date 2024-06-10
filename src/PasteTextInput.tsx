@@ -61,7 +61,7 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
         id,
         tabIndex,
         'selection': propsSelection,
-        // selectionColor,
+        selectionColor,
         // selectionHandleColor,
         // cursorColor,
         ...otherProps
@@ -88,9 +88,12 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
         string | undefined
     >(props.value);
     const [lastNativeSelectionState, setLastNativeSelection] = React.useState<{
-        selection?: Selection | null;
+        selection: Selection;
         mostRecentEventCount: number;
-    }>({ selection, mostRecentEventCount });
+    }>({
+        selection: { start: -1, end: -1 },
+        mostRecentEventCount,
+    });
 
     const lastNativeSelection = lastNativeSelectionState.selection;
     const text =
@@ -405,6 +408,7 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
             onSelectionChange={_onSelectionChange}
             onSelectionChangeShouldSetResponder={emptyFunctionThatReturnsTrue}
             selection={selection}
+            selectionColor={selectionColor}
             style={StyleSheet.compose(
                 useMultilineDefaultStyle ? styles.multilineDefault : null,
                 style
