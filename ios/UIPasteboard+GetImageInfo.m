@@ -8,8 +8,8 @@
 
 #import "UIPasteboard+GetImageInfo.h"
 #import "NSData+MimeType.h"
-#import "react_native_paste_input-Swift.h"
 #import "UIImage+vImageScaling.h"
+#import "Swime/SwimeProxy.h"
 
 @implementation UIPasteboard (GetImageInfo)
 
@@ -38,7 +38,7 @@
         }
         
         SwimeProxy *swimeProxy = [SwimeProxy shared];
-        MimeTypeProxy *mimeProxy = [swimeProxy getMimeAndExtensionWithData:fileData uti:type];
+        MimeTypeProxy *mimeProxy = [swimeProxy getMimeAndExtension:fileData uti:type];
         NSString *extension;
         NSString *mimeType;
         if (mimeProxy != nil) {

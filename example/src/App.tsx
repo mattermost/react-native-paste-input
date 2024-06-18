@@ -27,11 +27,9 @@ export default function App() {
         setInputVisible(!inputVisible);
     };
 
-    // React.useEffect(() => {
-    //     requestAnimationFrame(() => {
-    //         inputRef.current?.focus();
-    //     });
-    // }, [inputRef]);
+    React.useLayoutEffect(() => {
+        // inputRef.current?.focus();
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -51,6 +49,7 @@ export default function App() {
                     textContentType="none"
                     autoComplete="off"
                     smartPunctuation="disable"
+                    selectionColor={'yellow'}
                 />
             )}
             <Button

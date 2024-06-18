@@ -1,4 +1,4 @@
-package com.mattermost.pasteinput
+package com.mattermost.pasteinputtext
 
 import android.content.ClipboardManager
 import android.content.Context
@@ -6,10 +6,13 @@ import android.net.Uri
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
+import com.facebook.react.uimanager.events.EventDispatcher
 
-class PasteInputActionCallback(editText: PasteInputEditText, disabled: Boolean) : ActionMode.Callback {
-  val isDisabled = disabled
-  val mEditText = editText
+class PasteInputActionCallback(editText: PasteInputEditText, disabled: Boolean, eventDispatcher: EventDispatcher?) : ActionMode.Callback {
+  private val isDisabled = disabled
+  private val mEditText = editText
+  private val mEventDispatcher = eventDispatcher
+
 
   override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
     if (isDisabled) {
@@ -26,7 +29,7 @@ class PasteInputActionCallback(editText: PasteInputEditText, disabled: Boolean) 
   override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
     val uri = getUriInClipboard()
     if (item?.itemId == android.R.id.paste && uri != null) {
-      mEditText.getOnPasteListener().onPaste(uri)
+      mEditText.getOnPasteListener().onPaste(uri, mEventDispatcher)
       mode?.finish()
     } else {
       mEditText.onTextContextMenuItem(item!!.itemId)
@@ -56,27 +59,14 @@ class PasteInputActionCallback(editText: PasteInputEditText, disabled: Boolean) 
 
   private fun getUriInClipboard() : Uri? {
     val clipboardManager = mEditText.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    val clipData = clipboardManager.primaryClip
-
-    if (clipData == null) {
-      return null
-    }
-
-    val item = clipData.getItemAt(0)
-    if (item == null) {
-      return null
-    }
-
-    val chars = item.text
-    if (chars == null) {
-      return null
-    }
+    val clipData = clipboardManager.primaryClip ?: return null
+    val item = clipData.getItemAt(0) ?: return null
+    val chars = item.text ?: return null
 
     val text = chars.toString()
-    if (text.length > 0) {
-      return null
-    }
+    return if (text.isNotEmpty()) {
+      null
+    } else item.uri
 
-    return item.uri
   }
 }
