@@ -230,7 +230,6 @@ export interface NativeProps extends ViewProps {
     onContentSizeChange?: DirectEventHandler<PasteTextInputContentSizeChangeEventData>;
     onScroll?: DirectEventHandler<PasteTextInputScrollEventData>;
     onSelectionChange?: DirectEventHandler<PasteTextInputSelectionChangeEventData>;
-    onTextInput?: DirectEventHandler<PasteTextInputTextInputEventData>;
 
     textShadowColor?: ColorValue;
     textShadowRadius?: Float;

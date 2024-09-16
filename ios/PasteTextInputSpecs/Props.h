@@ -70,9 +70,6 @@ public:
 
     std::string const inputAccessoryViewID{};
 
-    bool onKeyPressSync{false};
-    bool onChangeSync{false};
-
     /*
      * Accessors
      */

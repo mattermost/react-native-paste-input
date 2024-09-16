@@ -104,18 +104,6 @@ PasteTextInputProps::PasteTextInputProps(
         rawProps,
         "inputAccessoryViewID",
         sourceProps.inputAccessoryViewID,
-        {})),
-    onKeyPressSync(convertRawProp(
-        context,
-        rawProps,
-        "onKeyPressSync",
-        sourceProps.onKeyPressSync,
-        {})),
-    onChangeSync(convertRawProp(
-        context,
-        rawProps,
-        "onChangeSync",
-        sourceProps.onChangeSync,
         {})){};
 
 void PasteTextInputProps::setProp(

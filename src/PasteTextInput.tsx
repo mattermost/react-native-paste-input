@@ -576,8 +576,8 @@ const ExportedForwardRef = React.forwardRef(function PasteTextInput(
             autoComplete={
                 Platform.OS === 'android'
                     ? // @ts-ignore
-                      autoCompleteWebToAutoCompleteAndroidMap[autoComplete] ??
-                      autoComplete
+                      (autoCompleteWebToAutoCompleteAndroidMap[autoComplete] ??
+                      autoComplete)
                     : undefined
             }
             textContentType={
