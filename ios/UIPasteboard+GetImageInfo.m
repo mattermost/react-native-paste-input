@@ -31,9 +31,9 @@
         NSString *uri = self.string;
         NSData *fileData = item[type];
         
-        if ([type isEqual:@"public.jpeg"] || [type isEqual:@"public.heic"] || [type isEqual:@"public.png"]) {
+        if ([type isEqual:@"public.jpeg"] || [type isEqual:@"public.png"]) {
           fileData = [self getDataForImageItem:item[type] type:type];
-        } else if ([type isEqual:@"com.compuserve.gif"]) {
+        } else if ([type isEqual:@"com.compuserve.gif"] || [type isEqual:@"public.heic"]) {
           fileData = [self dataForPasteboardType:type];
         }
         
@@ -75,19 +75,13 @@
     }
   }
   
+
   return fileInfos;
 }
 
 -(NSData *) getDataForImageItem:(NSData *)imageData type:(NSString *)type {
   UIImage *image;
-  if ([type isEqual:@"public.heic"]) {
-    CFDataRef cfdata = CFDataCreate(NULL, [imageData bytes], [imageData length]);
-    CGImageSourceRef source = CGImageSourceCreateWithData(cfdata, nil);
-    CGImageRef imageRef = CGImageSourceCreateImageAtIndex(source, 0, nil);
-    image = [[UIImage alloc] initWithCGImage:imageRef];
-  } else {
-    image = (UIImage *)imageData;
-  }
+  image = (UIImage *)imageData;
   size_t width = CGImageGetWidth(image.CGImage);
   size_t height = CGImageGetHeight(image.CGImage);
   if (width > 6048 || height > 4032) {
