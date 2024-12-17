@@ -121,8 +121,7 @@ Size PasteTextInputShadowNode::measureContent(
           attributedStringBoxToMeasure(layoutContext),
           getConcreteProps().getEffectiveParagraphAttributes(),
           textLayoutContext,
-          layoutConstraints,
-          nullptr)
+          layoutConstraints)
       .size;
 }
 

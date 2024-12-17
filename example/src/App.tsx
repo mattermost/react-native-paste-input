@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { Platform, StyleSheet, View, Button } from 'react-native';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Platform, StyleSheet, View, Button, Appearance } from 'react-native';
 import PasteInput, {
     type PastedFile,
     type PasteInputRef,
@@ -11,6 +11,9 @@ export default function App() {
     const inputRef = useRef<PasteInputRef>(null);
     const [file, setFile] = useState<PastedFile>();
     const [inputVisible, setInputVisible] = useState<boolean>(true);
+    const [color, setColor] = useState(
+        Appearance.getColorScheme() === 'light' ? 'black' : 'white'
+    );
 
     const onPaste = (
         error: string | null | undefined,
@@ -27,8 +30,16 @@ export default function App() {
         setInputVisible(!inputVisible);
     };
 
-    React.useLayoutEffect(() => {
-        // inputRef.current?.focus();
+    useEffect(() => {
+        const listener = Appearance.addChangeListener((preferences) => {
+            setColor(preferences.colorScheme === 'light' ? 'black' : 'white');
+        });
+
+        return () => listener.remove();
+    }, []);
+
+    useLayoutEffect(() => {
+        inputRef.current?.focus();
     }, []);
 
     return (
@@ -39,7 +50,7 @@ export default function App() {
                     ref={inputRef}
                     disableCopyPaste={false}
                     onPaste={onPaste}
-                    style={styles.input}
+                    style={[{ color }, styles.input]}
                     multiline={true}
                     placeholder="This is a PasteInput"
                     submitBehavior="newline"
@@ -49,7 +60,6 @@ export default function App() {
                     textContentType="none"
                     autoComplete="off"
                     smartPunctuation="disable"
-                    selectionColor={'yellow'}
                 />
             )}
             <Button
