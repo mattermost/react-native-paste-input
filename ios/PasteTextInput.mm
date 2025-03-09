@@ -597,9 +597,18 @@ std::int32_t convertNSDictionaryValueToStdInt(NSDictionary *dictionary, NSString
   if ([self _textOf:attributedString equals:_backedTextInputView.attributedText]) {
     return;
   }
+  
+  // Save current scroll position
+  CGPoint originalOffset = _backedTextInputView.contentOffset;
+  
+  // Temporarily disable scrolling animations
+  BOOL originalScrollEnabled = _backedTextInputView.scrollEnabled;
+  _backedTextInputView.scrollEnabled = NO;
+  
   UITextRange *selectedRange = _backedTextInputView.selectedTextRange;
   NSInteger oldTextLength = _backedTextInputView.attributedText.string.length;
   _backedTextInputView.attributedText = attributedString;
+  
   if (selectedRange.empty) {
     // Maintaining a cursor position relative to the end of the old text.
     NSInteger offsetStart = [_backedTextInputView offsetFromPosition:_backedTextInputView.beginningOfDocument
@@ -612,6 +621,13 @@ std::int32_t convertNSDictionaryValueToStdInt(NSDictionary *dictionary, NSString
                                 notifyDelegate:YES];
   }
   [self _restoreTextSelection];
+  
+  // Restore scroll position immediately
+  [_backedTextInputView setContentOffset:originalOffset animated:NO];
+  
+  // Re-enable scrolling with original state
+  _backedTextInputView.scrollEnabled = originalScrollEnabled;
+  
   _lastStringStateWasUpdatedWith = attributedString;
 }
 
