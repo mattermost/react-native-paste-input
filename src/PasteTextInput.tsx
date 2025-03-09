@@ -417,15 +417,11 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
         />
     );
 
-    if (Platform.OS === 'ios') {
-        return (
-            <TextAncestor.Provider value={true}>
-                {textInput}
-            </TextAncestor.Provider>
-        );
-    }
-
-    return textInput;
+    return (
+        <TextAncestor.Provider value={true}>
+            {textInput}
+        </TextAncestor.Provider>
+    );
 }
 
 const enterKeyHintToReturnTypeMap: Record<string, ReturnKeyTypeOptions> = {
