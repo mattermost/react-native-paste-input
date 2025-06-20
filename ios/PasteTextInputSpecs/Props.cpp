@@ -22,7 +22,6 @@ PasteTextInputProps::PasteTextInputProps(
     const PropsParserContext &context,
     const PasteTextInputProps &sourceProps,
     const RawProps& rawProps)
-    : ViewProps(context, sourceProps, rawProps),
     : BaseTextInputProps(context, sourceProps, rawProps),
     traits(convertRawProp(context, rawProps, sourceProps.traits, {})),
     smartPunctuation(convertRawProp(context, rawProps, "smartPunctuation", sourceProps.smartPunctuation, {})),
