@@ -86,7 +86,7 @@ std::int32_t convertNSDictionaryValueToStdInt(NSDictionary *dictionary, NSString
     if (self = [super initWithFrame:frame]) {
         static const auto defaultProps = std::make_shared<const PasteTextInputProps>();
         _props = defaultProps;
-        
+
         _backedTextInputView = [[PasteInputTextView alloc] initWithFrame:self.bounds];
         _backedTextInputView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _backedTextInputView.textInputDelegate = self;
@@ -94,10 +94,10 @@ std::int32_t convertNSDictionaryValueToStdInt(NSDictionary *dictionary, NSString
         _ignoreNextTextInputCall = NO;
         _comingFromJS = NO;
         _didMoveToWindow = NO;
-        
+
         [self addSubview:_backedTextInputView];
     }
-    
+
     return self;
 }
 
@@ -122,8 +122,8 @@ std::int32_t convertNSDictionaryValueToStdInt(NSDictionary *dictionary, NSString
   const auto &newTextInputProps = static_cast<const PasteTextInputProps &>(*props);
 
   // Traits:
-  if (newTextInputProps.traits.multiline != oldTextInputProps.traits.multiline) {
-    [self _setMultiline:newTextInputProps.traits.multiline];
+  if (newTextInputProps.multiline != oldTextInputProps.multiline) {
+    [self _setMultiline:newTextInputProps.multiline];
   }
 
   if (newTextInputProps.traits.autocapitalizationType != oldTextInputProps.traits.autocapitalizationType) {
@@ -221,15 +221,15 @@ std::int32_t convertNSDictionaryValueToStdInt(NSDictionary *dictionary, NSString
   if (newTextInputProps.inputAccessoryViewID != oldTextInputProps.inputAccessoryViewID) {
     _backedTextInputView.inputAccessoryViewID = RCTNSStringFromString(newTextInputProps.inputAccessoryViewID);
   }
-    
+
   if (newTextInputProps.smartPunctuation != oldTextInputProps.smartPunctuation) {
       [self _setSmartPunctuation:[[NSString alloc] initWithCString:newTextInputProps.smartPunctuation.c_str() encoding:NSASCIIStringEncoding]];
   }
-    
+
   if (newTextInputProps.disableCopyPaste != oldTextInputProps.disableCopyPaste) {
     _backedTextInputView.disableCopyPaste = newTextInputProps.disableCopyPaste;
   }
-    
+
   [super updateProps:props oldProps:oldProps];
 
   [self setDefaultInputAccessoryView];
@@ -421,7 +421,7 @@ std::int32_t convertNSDictionaryValueToStdInt(NSDictionary *dictionary, NSString
     return;
   }
   const auto &props = static_cast<const PasteTextInputProps &>(*_props);
-  if (props.traits.multiline && ![_lastStringStateWasUpdatedWith isEqual:_backedTextInputView.attributedText]) {
+  if (props.multiline && ![_lastStringStateWasUpdatedWith isEqual:_backedTextInputView.attributedText]) {
     [self textInputDidChange];
     _ignoreNextTextInputCall = YES;
   }
@@ -636,7 +636,7 @@ std::int32_t convertNSDictionaryValueToStdInt(NSDictionary *dictionary, NSString
                     }
                 }
             }
-            
+
             eventEmitter->onPaste(PasteTextInputEventEmitter::OnPaste{
                 .data = eventDataVector
             });
@@ -708,11 +708,11 @@ std::int32_t convertNSDictionaryValueToStdInt(NSDictionary *dictionary, NSString
 - (SubmitBehavior)getSubmitBehavior
 {
   const auto &props = static_cast<const PasteTextInputProps &>(*_props);
-  const SubmitBehavior submitBehaviorDefaultable = props.traits.submitBehavior;
+  const SubmitBehavior submitBehaviorDefaultable = props.submitBehavior;
 
   // We should always have a non-default `submitBehavior`, but in case we don't, set it based on multiline.
   if (submitBehaviorDefaultable == SubmitBehavior::Default) {
-    return props.traits.multiline ? SubmitBehavior::Newline : SubmitBehavior::BlurAndSubmit;
+    return props.multiline ? SubmitBehavior::Newline : SubmitBehavior::BlurAndSubmit;
   }
 
   return submitBehaviorDefaultable;

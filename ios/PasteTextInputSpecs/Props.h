@@ -15,6 +15,7 @@
 #include <react/renderer/components/iostextinput/conversions.h>
 #include <react/renderer/components/iostextinput/primitives.h>
 #include <react/renderer/components/text/BaseTextProps.h>
+#include <react/renderer/components/textinput/BaseTextInputProps.h>
 #include <react/renderer/components/view/ViewProps.h>
 #include <react/renderer/core/Props.h>
 #include <react/renderer/core/PropsParserContext.h>
@@ -25,17 +26,17 @@
 
 namespace facebook::react {
 
-class PasteTextInputProps final : public ViewProps, public BaseTextProps {
+class PasteTextInputProps final : public BaseTextInputProps {
 public:
     PasteTextInputProps() = default;
     PasteTextInputProps(const PropsParserContext& context, const PasteTextInputProps& sourceProps, const RawProps& rawProps);
-    
+
     void setProp(
                  const PropsParserContext& context,
                  RawPropsPropNameHash hash,
                  const char* propName,
                  const RawValue& value);
-    
+
 #pragma mark - Props
     const TextInputTraits traits{};
     const ParagraphAttributes paragraphAttributes{};
@@ -49,7 +50,7 @@ public:
 
     std::string smartPunctuation{};
     bool disableCopyPaste{false};
-    
+
     /*
      * Tint colors
      */
