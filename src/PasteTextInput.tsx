@@ -12,6 +12,7 @@ import type {
 import {
     Platform,
     StyleSheet,
+    Text,
     type HostComponent,
     type KeyboardTypeOptions,
     type NativeSyntheticEvent,
@@ -101,7 +102,7 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
             ? props.value
             : typeof props.defaultValue === 'string'
               ? props.defaultValue
-              : '';
+              : undefined;
 
     // This is necessary in case native updates the text and JS decides
     // that the update should be ignored and we should stick with the value
@@ -147,6 +148,15 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
         lastNativeSelection,
         text,
     ]);
+
+    let children = props.children;
+    const childCount = React.Children.count(children);
+    if (props.value != null && childCount) {
+        throw new Error('Cannot specify both value and children');
+    }
+    if (childCount > 1) {
+        children = <Text>{children}</Text>;
+    }
 
     React.useLayoutEffect(() => {
         const inputRefValue = inputRef.current;
@@ -376,8 +386,7 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
         };
     }
 
-    // @ts-ignore
-    const style = flattenStyle<TextStyleProp>(props.style);
+    const style = flattenStyle(props.style);
 
     const useMultilineDefaultStyle =
         props.multiline === true &&
@@ -414,13 +423,12 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
                 style
             )}
             text={text}
+            children={children}
         />
     );
 
     return (
-        <TextAncestor.Provider value={true}>
-            {textInput}
-        </TextAncestor.Provider>
+        <TextAncestor.Provider value={true}>{textInput}</TextAncestor.Provider>
     );
 }
 

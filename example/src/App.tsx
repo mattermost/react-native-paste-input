@@ -1,5 +1,13 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Platform, StyleSheet, View, Button, Appearance } from 'react-native';
+import {
+    Platform,
+    StyleSheet,
+    View,
+    Button,
+    Appearance,
+    Text,
+    TextInput,
+} from 'react-native';
 import PasteInput, {
     type PastedFile,
     type PasteInputRef,
@@ -60,8 +68,29 @@ export default function App() {
                     textContentType="none"
                     autoComplete="off"
                     smartPunctuation="disable"
-                />
+                >
+                    <Text>
+                        Test? pwaojefpawjga woejg pawjge pjwegp wjegp jwepaowegj
+                        pgjeopgjaweog{' '}
+                    </Text>
+                    <Text>
+                        Test? ajwegpoawegp jawpogh pdhgpawofodfj ewpgh wegpweg d
+                        do eogewge
+                    </Text>
+                    <Text>Test? agpoweajg padf pdf fpweapgaweg pwag aweg</Text>
+                </PasteInput>
             )}
+            <TextInput
+                style={[{ color }, styles.input]}
+                multiline={true}
+                placeholder="This is a Normal Input"
+                submitBehavior="newline"
+                underlineColorAndroid="transparent"
+                keyboardType="default"
+                disableFullscreenUI={true}
+                textContentType="none"
+                autoComplete="off"
+            />
             <Button
                 title={inputVisible ? 'Hide Input' : 'Show Input'}
                 onPress={toggleInputVisibility}
@@ -72,6 +101,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: 'red',
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',

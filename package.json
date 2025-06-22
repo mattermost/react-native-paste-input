@@ -13,6 +13,7 @@
     "android",
     "ios",
     "cpp",
+    "react-native.config.js",
     "react-native-paste-input.podspec",
     "!lib/typescript/example",
     "!**/__tests__",
@@ -77,7 +78,7 @@
     "prettier": "3.4.2",
     "react": "19.0.0",
     "react-native": "0.79.3",
-    "react-native-builder-bob": "0.35.2",
+    "react-native-builder-bob": "0.40.12",
     "release-it": "17.10.0",
     "typescript": "5.7.2"
   },
@@ -127,12 +128,13 @@
     "name": "PasteTextInputSpecs",
     "type": "components",
     "jsSrcsDir": "./src",
-    "includesGeneratedCode": false,
     "outputDir": {
-      "ios": "./ios"
+      "ios": "ios/generated",
+      "android": "android/generated"
     },
     "android": {
       "javaPackageName": "com.mattermost.pastetextinput"
-    }
+    },
+    "includesGeneratedCode": true
   }
 }

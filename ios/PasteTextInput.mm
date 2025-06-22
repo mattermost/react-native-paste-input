@@ -5,11 +5,11 @@
 #import <React/RCTBackedTextInputViewProtocol.h>
 #import <React/RCTUITextView.h>
 
-#import "PasteTextInputSpecs/ComponentDescriptors.h"
-#import "PasteTextInputSpecs/EventEmitters.h"
-#import "PasteTextInputSpecs/Props.h"
-#import "PasteTextInputSpecs/RCTComponentViewHelpers.h"
-#import "PasteTextInputSpecs/ShadowNodes.h"
+#import "generated/PasteTextInputSpecs/ComponentDescriptors.h"
+#import "generated/PasteTextInputSpecs/EventEmitters.h"
+#import "generated/PasteTextInputSpecs/Props.h"
+#import "generated/PasteTextInputSpecs/RCTComponentViewHelpers.h"
+#import "generated/PasteTextInputSpecs/ShadowNodes.h"
 
 #import <react/renderer/textlayoutmanager/RCTAttributedTextUtils.h>
 
@@ -122,8 +122,8 @@ std::int32_t convertNSDictionaryValueToStdInt(NSDictionary *dictionary, NSString
   const auto &newTextInputProps = static_cast<const PasteTextInputProps &>(*props);
 
   // Traits:
-  if (newTextInputProps.traits.multiline != oldTextInputProps.traits.multiline) {
-    [self _setMultiline:newTextInputProps.traits.multiline];
+  if (newTextInputProps.multiline != oldTextInputProps.multiline) {
+    [self _setMultiline:newTextInputProps.multiline];
   }
 
   if (newTextInputProps.traits.autocapitalizationType != oldTextInputProps.traits.autocapitalizationType) {
@@ -421,7 +421,7 @@ std::int32_t convertNSDictionaryValueToStdInt(NSDictionary *dictionary, NSString
     return;
   }
   const auto &props = static_cast<const PasteTextInputProps &>(*_props);
-  if (props.traits.multiline && ![_lastStringStateWasUpdatedWith isEqual:_backedTextInputView.attributedText]) {
+  if (props.multiline && ![_lastStringStateWasUpdatedWith isEqual:_backedTextInputView.attributedText]) {
     [self textInputDidChange];
     _ignoreNextTextInputCall = YES;
   }
@@ -708,11 +708,11 @@ std::int32_t convertNSDictionaryValueToStdInt(NSDictionary *dictionary, NSString
 - (SubmitBehavior)getSubmitBehavior
 {
   const auto &props = static_cast<const PasteTextInputProps &>(*_props);
-  const SubmitBehavior submitBehaviorDefaultable = props.traits.submitBehavior;
+  const SubmitBehavior submitBehaviorDefaultable = props.submitBehavior;
 
   // We should always have a non-default `submitBehavior`, but in case we don't, set it based on multiline.
   if (submitBehaviorDefaultable == SubmitBehavior::Default) {
-    return props.traits.multiline ? SubmitBehavior::Newline : SubmitBehavior::BlurAndSubmit;
+    return props.multiline ? SubmitBehavior::Newline : SubmitBehavior::BlurAndSubmit;
   }
 
   return submitBehaviorDefaultable;

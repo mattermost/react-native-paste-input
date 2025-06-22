@@ -1,57 +1,94 @@
-import groovy.json.JsonSlurper
-
 buildscript {
-  ext.safeExtGet = {prop, fallback ->
-    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+  ext.getExtOrDefault = {name ->
+    return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['ReactNativePasteInput_' + name]
   }
+
   repositories {
     google()
-    gradlePluginPortal()
+    mavenCentral()
   }
+
   dependencies {
-    classpath("com.android.tools.build:gradle:7.3.1")
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.22")
+    classpath "com.android.tools.build:gradle:8.7.2"
+    // noinspection DifferentKotlinGradleVersion
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${getExtOrDefault('kotlinVersion')}"
   }
 }
 
-def isNewArchitectureEnabled() {
-  return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
-}
 
-if (isNewArchitectureEnabled()) {
-    apply plugin: "com.facebook.react"
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+
+apply plugin: "com.facebook.react"
+
+def getExtOrIntegerDefault(name) {
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["TestItOut_" + name]).toInteger()
 }
-apply plugin: 'com.android.library'
-apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
-  compileSdkVersion safeExtGet('compileSdkVersion', 33)
   namespace "com.mattermost.pasteinputtext"
 
+  compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
+
   defaultConfig {
-    minSdkVersion safeExtGet('minSdkVersion', 24)
-    targetSdkVersion safeExtGet('targetSdkVersion', 35)
-    buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", "true")
+    minSdkVersion getExtOrIntegerDefault("minSdkVersion")
+    targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
+      externalNativeBuild {
+          cmake {
+              cppFlags '-DBUILD_DEBUG'
+          }
+      }
+  }
+
+  buildFeatures {
+    buildConfig true
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+
+  lintOptions {
+    disable "GradleCompatible"
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
   }
 
   sourceSets {
     main {
-      if (isNewArchitectureEnabled()) {
-        // java.srcDirs += ['src/newarch']
-      }
+      java.srcDirs += [
+        "generated/java",
+        "generated/jni"
+      ]
+    }
+  }
+
+  externalNativeBuild {
+    cmake {
+        path file('generated/jni/CMakeLists.txt')
+        version '3.22.1'
     }
   }
 }
 
+def kotlin_version = getExtOrDefault("kotlinVersion")
+
 repositories {
-  maven {
-    // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-    url "$projectDir/../node_modules/react-native/android"
-  }
   mavenCentral()
   google()
 }
 
 dependencies {
   implementation 'com.facebook.react:react-native:+'
+}
+
+react {
+  jsRootDir = file("../src/")
+  libraryName = "react-native-paste-input"
+  codegenJavaPackageName = "com.mattermost.pastetextinput"
 }

@@ -22,8 +22,7 @@ PasteTextInputProps::PasteTextInputProps(
     const PropsParserContext &context,
     const PasteTextInputProps &sourceProps,
     const RawProps& rawProps)
-    : ViewProps(context, sourceProps, rawProps),
-    BaseTextProps(context, sourceProps, rawProps),
+    : BaseTextInputProps(context, sourceProps, rawProps),
     traits(convertRawProp(context, rawProps, sourceProps.traits, {})),
     smartPunctuation(convertRawProp(context, rawProps, "smartPunctuation", sourceProps.smartPunctuation, {})),
     disableCopyPaste(convertRawProp(context, rawProps, "disableCopyPaste", sourceProps.disableCopyPaste, {false})),
@@ -133,7 +132,7 @@ TextAttributes PasteTextInputProps::getEffectiveTextAttributes(Float fontSizeMul
 ParagraphAttributes PasteTextInputProps::getEffectiveParagraphAttributes() const {
     auto result = paragraphAttributes;
     
-    if (!traits.multiline) {
+    if (!multiline) {
         result.maximumNumberOfLines = 1;
     }
     

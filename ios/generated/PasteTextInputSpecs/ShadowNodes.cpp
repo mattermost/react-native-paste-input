@@ -91,12 +91,8 @@ void PasteTextInputShadowNode::updateStateIfNeeded(
   const auto& state = getStateData();
 
   react_native_assert(textLayoutManager_);
-  react_native_assert(
-      (!state.layoutManager || state.layoutManager == textLayoutManager_) &&
-      "`StateData` refers to a different `TextLayoutManager`");
 
-  if (state.reactTreeAttributedString == reactTreeAttributedString &&
-      state.layoutManager == textLayoutManager_) {
+  if (state.reactTreeAttributedString == reactTreeAttributedString) {
     return;
   }
 
@@ -104,7 +100,6 @@ void PasteTextInputShadowNode::updateStateIfNeeded(
   newState.attributedStringBox = AttributedStringBox{reactTreeAttributedString};
   newState.paragraphAttributes = getConcreteProps().paragraphAttributes;
   newState.reactTreeAttributedString = reactTreeAttributedString;
-  newState.layoutManager = textLayoutManager_;
   newState.mostRecentEventCount = getConcreteProps().mostRecentEventCount;
   setStateData(std::move(newState));
 }

@@ -12,14 +12,9 @@ Pod::Spec.new do |s|
 
   s.platforms    = { :ios => "12.4" }
   s.source       = { :git => "https://github.com/mattermost/react-native-paste-input.git", :tag => "#{s.version}" }
-  s.swift_version = '5.0'
 
-  
   s.source_files = "ios/**/*.{h,m,mm,swift,cpp}"
-
-  if ENV["RCT_NEW_ARCH_ENABLED"] == nil || ENV["RCT_NEW_ARCH_ENABLED"] != "1"
-    s.exclude_files = "ios/PasteTextInputSpecs"
-  end
+  s.private_header_files = "ios/**/*.h"
 
   install_modules_dependencies(s)
 end
