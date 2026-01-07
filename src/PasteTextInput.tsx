@@ -418,9 +418,7 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
     );
 
     return (
-        <TextAncestor.Provider value={true}>
-            {textInput}
-        </TextAncestor.Provider>
+        <TextAncestor.Provider value={true}>{textInput}</TextAncestor.Provider>
     );
 }
 

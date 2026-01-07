@@ -1,13 +1,10 @@
-import type React from 'react';
-// import { Platform } from 'react-native';
-import type { PasteInputProps } from './types';
+/**
+ * @mattermost/react-native-paste-input
+ *
+ * A TextInput wrapper that intercepts file paste events while maintaining
+ * full TextInput compatibility through a native module approach.
+ */
 
+export { default } from './PasteInput';
 export * from './types';
-
-let PasteInput: React.ForwardRefExoticComponent<
-    PasteInputProps & React.RefAttributes<unknown>
->;
-
-PasteInput = require('./PasteTextInput').default;
-
-export default PasteInput;
+export type { PasteInputConfig } from './NativePasteInputModule';

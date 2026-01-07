@@ -2,13 +2,13 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Platform, StyleSheet, View, Button, Appearance } from 'react-native';
 import PasteInput, {
     type PastedFile,
-    type PasteInputRef,
+    type PasteTextInputInstance,
 } from '@mattermost/react-native-paste-input';
 
 import Details from './Details';
 
 export default function App() {
-    const inputRef = useRef<PasteInputRef>(null);
+    const inputRef = useRef<PasteTextInputInstance>(null);
     const [file, setFile] = useState<PastedFile>();
     const [inputVisible, setInputVisible] = useState<boolean>(true);
     const [color, setColor] = useState(

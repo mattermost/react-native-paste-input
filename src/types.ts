@@ -27,39 +27,33 @@ export interface PasteEvent {
     };
 }
 
+/**
+ * Smart punctuation settings for iOS
+ */
+export type SmartPunctuation = 'default' | 'enable' | 'disable';
+
+/**
+ * Props for the PasteInput component
+ * Extends all standard TextInput props
+ */
 export interface PasteInputProps extends TextInputProps {
     forwardedRef?: ForwardedRef<PasteTextInputInstance>;
+    /**
+     * Disable copy, cut, and paste actions
+     */
     disableCopyPaste?: boolean;
+
+    /**
+     * Configure smart punctuation (iOS only)
+     */
+    smartPunctuation?: SmartPunctuation;
+
+    /**
+     * Callback when files are pasted
+     * @param error - Error message if paste failed, null otherwise
+     * @param files - Array of pasted files
+     */
     onPaste(error: string | null | undefined, files: Array<PastedFile>): void;
-    submitBehavior?: SubmitBehavior;
-    smartPunctuation?: SmartPunctuation;
-}
-
-export interface RCTPasteInputProps extends TextInputProps {
-    disableCopyPaste?: boolean;
-    mostRecentEventCount: number;
-    onPaste(event: PasteEvent): void;
-    smartPunctuation?: SmartPunctuation;
-}
-
-export interface PasteInputRef {
-    clear(): void;
-    isFocused(): boolean;
-    focus(): void;
-    blur(): void;
-    setNativeProps(nativeProps: object): void;
-}
-
-export interface TextInputNativeCommands {
-    focus: (viewRef: unknown) => void;
-    blur: (viewRef: unknown) => void;
-    setTextAndSelection: (
-        viewRef: unknown,
-        mostRecentEventCount: number,
-        value: string | null, // in theory this is nullable
-        start: number,
-        end: number
-    ) => void;
 }
 
 export interface Selection {
@@ -68,4 +62,3 @@ export interface Selection {
 }
 
 export type SubmitBehavior = 'submit' | 'blurAndSubmit' | 'newline';
-export type SmartPunctuation = 'default' | 'enable' | 'disable';

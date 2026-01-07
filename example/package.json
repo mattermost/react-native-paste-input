@@ -11,7 +11,7 @@
   "dependencies": {
     "@mattermost/react-native-paste-input": "file://../",
     "react": "18.3.1",
-    "react-native": "0.76.5"
+    "react-native": "0.76.9"
   },
   "devDependencies": {
     "@babel/runtime": "7.26.0",

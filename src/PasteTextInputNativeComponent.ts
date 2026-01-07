@@ -14,7 +14,11 @@ import type {
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 
-export interface PasteTextInputPasteEventData {
+export type TargetedEvent = {
+    target: Int32;
+};
+
+export interface PasteTextInputPasteEventData extends TargetedEvent {
     data: Readonly<
         {
             fileName: string;
@@ -28,15 +32,11 @@ export interface PasteTextInputPasteEventData {
     }>;
 }
 
-export type TargetedEvent = {
-    target: Int32;
-};
-
 export interface PasteTextInputContentSizeChangeEventData
     extends TargetedEvent {
     contentSize: {
-        width: Int32;
-        height: Int32;
+        width: Double;
+        height: Double;
     };
 }
 
@@ -80,6 +80,7 @@ export interface PasteTextInputTextInputEventData extends TargetedEvent {
 
 export interface PasteTextInputEditEventData extends TargetedEvent {
     text: string;
+    eventCount: Int32;
 }
 
 export interface PasteTextInputKeyEventData extends TargetedEvent {
@@ -225,7 +226,7 @@ export interface NativeProps extends ViewProps {
     onFocus?: BubblingEventHandler<TargetedEvent>;
     onKeyPress?: BubblingEventHandler<PasteTextInputKeyEventData>;
     onPaste?: BubblingEventHandler<PasteTextInputPasteEventData>;
-    onSubmitEdition?: BubblingEventHandler<PasteTextInputEditEventData>;
+    onSubmitEditing?: BubblingEventHandler<PasteTextInputEditEventData>;
 
     onContentSizeChange?: DirectEventHandler<PasteTextInputContentSizeChangeEventData>;
     onScroll?: DirectEventHandler<PasteTextInputScrollEventData>;

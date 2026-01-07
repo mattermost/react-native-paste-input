@@ -14,6 +14,7 @@ import com.facebook.react.views.textinput.ReactTextInputManager
 
 @ReactModule(name = "PasteTextInput")
 class PasteTextInputManager(context: ReactApplicationContext) : ReactTextInputManager() {
+
   private var disableCopyPaste: Boolean = false
   private val mContext = context
 
@@ -53,13 +54,12 @@ class PasteTextInputManager(context: ReactApplicationContext) : ReactTextInputMa
     pasteInputEditText.setOnPasteListener(PasteInputListener(pasteInputEditText, reactContext.surfaceId), eventDispatcher)
   }
 
-  override fun getExportedCustomBubblingEventTypeConstants(): MutableMap<String, Any> {
-    val map = super.getExportedCustomBubblingEventTypeConstants()!!
-    map["onPaste"] = MapBuilder.of(
+  override fun getExportedCustomBubblingEventTypeConstants(): MutableMap<String, Any>? {
+    val map = super.getExportedCustomBubblingEventTypeConstants() ?: mutableMapOf()
+    map["topPaste"] = MapBuilder.of(
       "phasedRegistrationNames",
       MapBuilder.of("bubbled", "onPaste")
     )
-
     return map
   }
 

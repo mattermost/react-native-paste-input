@@ -1,9 +1,9 @@
 {
   "name": "@mattermost/react-native-paste-input",
-  "version": "0.8.1",
-  "description": "React Native TextInput replacement to allow pasting files",
-  "main": "lib/commonjs/index",
-  "module": "lib/module/index",
+  "version": "1.0.0",
+  "description": "React Native TextInput replacement to allow pasting files (Fabric only)",
+  "main": "lib/commonjs/index.js",
+  "module": "lib/module/index.js",
   "types": "lib/typescript/src/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
@@ -33,7 +33,7 @@
     "prepare": "bob build && husky install",
     "release": "release-it",
     "example": "cd example && npm",
-    "pods": "cd example && pod-install --quiet",
+    "pods": "cd example && RCT_NEW_ARCH_ENABLED=1 pod-install --quiet",
     "bootstrap": "npm run example i && npm run pods"
   },
   "keywords": [
@@ -83,7 +83,7 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": ">=0.76.0"
   },
   "jest": {
     "preset": "react-native",
@@ -125,14 +125,15 @@
   },
   "codegenConfig": {
     "name": "PasteTextInputSpecs",
-    "type": "components",
-    "jsSrcsDir": "./src",
-    "includesGeneratedCode": false,
-    "outputDir": {
-      "ios": "./ios"
-    },
+    "type": "all",
+    "jsSrcsDir": "src",
     "android": {
       "javaPackageName": "com.mattermost.pastetextinput"
+    },
+    "ios": {
+      "componentProvider": {
+        "PasteTextInput": "PasteTextInputComponentView"
+      }
     }
   }
 }
