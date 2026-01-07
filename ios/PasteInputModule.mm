@@ -361,6 +361,52 @@ static void pasteInputInterceptedPasteIMP(id self, SEL _cmd, id sender)
 
     // Check for files in pasteboard
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+
+    // Quick check: Detect if pasteboard contains actual file data (images, documents, etc.)
+    // Use hasImages as a fast indicator, then verify there's actual file content
+    BOOL hasFileData = NO;
+
+    // Check if pasteboard has images (most common file paste case)
+    if (pasteboard.hasImages) {
+        hasFileData = YES;
+    } else {
+        // For other file types, check pasteboard items
+        // Exclude rich text formats (HTML, RTF, RTFD) which are just text representations
+        NSArray<NSDictionary<NSString *, id> *> *items = pasteboard.items;
+
+        for (NSDictionary *item in items) {
+            for (NSString *type in item.allKeys) {
+                // Skip text and rich text format types - these are not files
+                if ([type isEqual:@"public.utf8-plain-text"] ||
+                    [type isEqual:@"public.plain-text"] ||
+                    [type isEqual:@"public.text"] ||
+                    [type isEqual:@"public.html"] ||
+                    [type isEqual:@"public.rtf"] ||
+                    [type isEqual:@"com.apple.flat-rtfd"] ||
+                    [type isEqual:@"public.url"] ||
+                    [type hasPrefix:@"org.chromium."]) {
+                    continue;
+                }
+
+                // Found a non-text type, likely a file
+                hasFileData = YES;
+                break;
+            }
+            if (hasFileData) break;
+        }
+    }
+
+    // If no file data found (only text/rich-text), call original paste for text
+    if (!hasFileData) {
+        struct objc_super superData = {
+            .receiver = self,
+            .super_class = originalClass
+        };
+        ((void(*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&superData, _cmd, sender);
+        return;
+    }
+
+    // Pasteboard contains file data - do full extraction
     NSArray<NSDictionary *> *files = [pasteboard getCopiedFiles];
 
     if (files && files.count > 0) {
