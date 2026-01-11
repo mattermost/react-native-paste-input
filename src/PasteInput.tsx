@@ -57,11 +57,17 @@ function PasteInputIOSComponent(
 
     // Expose the TextInput ref to parent components (same as Android)
     // TextInput already has all methods from PasteTextInputInstance (clear, isFocused, setSelection)
-    useImperativeHandle(
-        forwardedRef,
-        () => textInputRef.current as unknown as PasteTextInputInstance,
-        []
-    );
+    useImperativeHandle(forwardedRef, () => {
+        if (textInputRef.current) {
+            return textInputRef.current as unknown as PasteTextInputInstance;
+        }
+        // Return a no-op implementation if ref is not yet available
+        return {
+            clear: () => {},
+            isFocused: () => false,
+            setSelection: () => {},
+        } as unknown as PasteTextInputInstance;
+    }, []);
 
     // Register/unregister with native module on mount/unmount
     useEffect(() => {
@@ -131,11 +137,17 @@ function PasteInputAndroidComponent(
     const pasteTextInputRef = useRef<PasteTextInputInstance>(null);
 
     // Expose the PasteTextInput ref to parent components (same as iOS)
-    useImperativeHandle(
-        forwardedRef,
-        () => pasteTextInputRef.current as PasteTextInputInstance,
-        []
-    );
+    useImperativeHandle(forwardedRef, () => {
+        if (pasteTextInputRef.current) {
+            return pasteTextInputRef.current;
+        }
+        // Return a no-op implementation if ref is not yet available
+        return {
+            clear: () => {},
+            isFocused: () => false,
+            setSelection: () => {},
+        } as unknown as PasteTextInputInstance;
+    }, []);
 
     // For Android, PasteTextInput already handles everything internally
     // Just need to adapt the onPaste callback format
