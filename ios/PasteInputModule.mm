@@ -267,6 +267,42 @@ RCT_EXPORT_MODULE()
 #pragma mark - Dynamic Subclassing
 
 /**
+ * Apply smart punctuation settings to the text view
+ */
+- (void)applySmartPunctuationSettings:(UIView *)view config:(NSDictionary *)config
+{
+    if (![view isKindOfClass:[UITextView class]] && ![view isKindOfClass:[UITextField class]]) {
+        return;
+    }
+
+    NSString *smartPunctuation = config[@"smartPunctuation"];
+    UITextSmartQuotesType smartQuotesType;
+    UITextSmartDashesType smartDashesType;
+
+    if ([smartPunctuation isEqualToString:@"enable"]) {
+        smartQuotesType = UITextSmartQuotesTypeYes;
+        smartDashesType = UITextSmartDashesTypeYes;
+    } else if ([smartPunctuation isEqualToString:@"disable"]) {
+        smartQuotesType = UITextSmartQuotesTypeNo;
+        smartDashesType = UITextSmartDashesTypeNo;
+    } else {
+        // "default" - use system default
+        smartQuotesType = UITextSmartQuotesTypeDefault;
+        smartDashesType = UITextSmartDashesTypeDefault;
+    }
+
+    if ([view isKindOfClass:[UITextView class]]) {
+        UITextView *textView = (UITextView *)view;
+        textView.smartQuotesType = smartQuotesType;
+        textView.smartDashesType = smartDashesType;
+    } else if ([view isKindOfClass:[UITextField class]]) {
+        UITextField *textField = (UITextField *)view;
+        textField.smartQuotesType = smartQuotesType;
+        textField.smartDashesType = smartDashesType;
+    }
+}
+
+/**
  * Apply dynamic subclassing to intercept paste events
  */
 - (void)applyDynamicSubclassing:(UIView *)view config:(NSDictionary *)config nativeID:(NSString *)nativeID
@@ -277,6 +313,7 @@ RCT_EXPORT_MODULE()
     if (objc_getAssociatedObject(view, kOriginalClassKey)) {
         // Already subclassed, just update config
         objc_setAssociatedObject(view, kPasteInputConfigKey, config, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        [self applySmartPunctuationSettings:view config:config];
         return;
     }
 
@@ -285,6 +322,9 @@ RCT_EXPORT_MODULE()
     objc_setAssociatedObject(view, kPasteInputConfigKey, config, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     objc_setAssociatedObject(view, kPasteInputModuleKey, self, OBJC_ASSOCIATION_ASSIGN);
     objc_setAssociatedObject(view, kPasteInputNativeIDKey, nativeID, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+
+    // Apply smartPunctuation setting to UITextView/UITextField
+    [self applySmartPunctuationSettings:view config:config];
 
     // Create dynamic subclass name
     NSString *className = NSStringFromClass(originalClass);
