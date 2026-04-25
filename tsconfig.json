@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
       "@mattermost/react-native-paste-input": ["./src/index"]
     },
-    "rootDir": "./src",
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
@@ -26,8 +26,8 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
+    "ignoreDeprecations": "6.0"
   },
   "extends": "@react-native/typescript-config",
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["**/node_modules", "**/Pods", "example"]
+  "exclude": ["node_modules", "example"]
 }
