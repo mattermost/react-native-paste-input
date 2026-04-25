@@ -30,7 +30,7 @@
     "test": "jest",
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "prepare": "bob build && husky",
+    "prepare": "bob build && (test -d .git && husky || true)",
     "release": "release-it",
     "example": "cd example && npm",
     "pods": "cd example && RCT_NEW_ARCH_ENABLED=1 pod-install --quiet",
