@@ -3,6 +3,7 @@
     "paths": {
       "@mattermost/react-native-paste-input": ["./src/index"]
     },
+    "rootDir": "./src",
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
