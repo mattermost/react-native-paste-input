@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@mattermost/react-native-paste-input": ["./src/index"]
     },
@@ -15,7 +14,7 @@
     "types": ["react-native", "jest"],
     "isolatedModules": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
@@ -27,4 +26,7 @@
     "strict": true,
     "target": "esnext",
   },
+  "extends": "@react-native/typescript-config",
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["**/node_modules", "**/Pods"]
 }

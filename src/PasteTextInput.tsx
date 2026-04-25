@@ -46,7 +46,7 @@ function useMergeRefs<Instance>(
                 }
             }
         },
-        [...refs] // eslint-disable-line react-hooks/exhaustive-deps
+        [...refs]
     );
 }
 

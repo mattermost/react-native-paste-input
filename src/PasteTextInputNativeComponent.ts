@@ -32,8 +32,7 @@ export interface PasteTextInputPasteEventData extends TargetedEvent {
     }>;
 }
 
-export interface PasteTextInputContentSizeChangeEventData
-    extends TargetedEvent {
+export interface PasteTextInputContentSizeChangeEventData extends TargetedEvent {
     contentSize: {
         width: Double;
         height: Double;

@@ -21,15 +21,65 @@ npm install --save-exact @mattermost/react-native-paste-input
 
 ### iOS Setup (Required)
 
-For iOS bridgeless mode support (React Native 0.74+), you need to configure the `reactHost` in your `AppDelegate`:
+You need to call `PasteInputModule.setup` from your `AppDelegate` so the library can locate native views. Choose the snippet that matches your AppDelegate style.
+
+#### AppDelegate.swift
+
+```swift
+import UIKit
+import React
+import React_RCTAppDelegate
+import ReactAppDependencyProvider
+import react_native_paste_input
+
+@main
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    var window: UIWindow?
+    var reactNativeDelegate: ReactNativeDelegate?
+    var reactNativeFactory: RCTReactNativeFactory?
+
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+        let delegate = ReactNativeDelegate()
+        let factory = RCTReactNativeFactory(delegate: delegate)
+        delegate.dependencyProvider = RCTAppDependencyProvider()
+
+        reactNativeDelegate = delegate
+        reactNativeFactory = factory
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+
+        factory.startReactNative(
+            withModuleName: "YourAppName",
+            in: window,
+            launchOptions: launchOptions
+        )
+
+        PasteInputModule.setup(factory.rootViewFactory)
+
+        return true
+    }
+}
+
+class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
+    override func bundleURL() -> URL? {
+#if DEBUG
+        RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+#else
+        Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+#endif
+    }
+}
+```
+
+#### AppDelegate.mm
 
 ```objc
 // AppDelegate.mm
 #import <React/RCTAppDelegate.h>
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#import <react-native-paste-input/PasteInputModule.h>
-#endif
+#import <react_native_paste_input/PasteInputModule.h>
 
 @implementation AppDelegate
 
@@ -38,12 +88,7 @@ For iOS bridgeless mode support (React Native 0.74+), you need to configure the 
   self.moduleName = @"YourAppName";
   BOOL result = [super application:application didFinishLaunchingWithOptions:launchOptions];
 
-#ifdef RCT_NEW_ARCH_ENABLED
-  // Set the reactHost for PasteInputModule (required for bridgeless mode)
-  if (self.rootViewFactory.reactHost) {
-    [PasteInputModule setReactHost:self.rootViewFactory.reactHost];
-  }
-#endif
+  [PasteInputModule setup:self.rootViewFactory];
 
   return result;
 }
@@ -51,7 +96,7 @@ For iOS bridgeless mode support (React Native 0.74+), you need to configure the 
 @end
 ```
 
-**Note:** This is required for bridgeless mode. Bridge mode (Fabric with bridge enabled) will work without this setup, but bridgeless mode is the recommended and default mode in React Native 0.74+.
+**Note:** Without this call the library cannot locate native views by tag and paste events will not be delivered.
 
 ### Android Setup
 
@@ -175,7 +220,7 @@ This library uses a hybrid approach to provide paste interception across platfor
 ### iOS: Views not being registered
 
 If you see errors about views not being found:
-1. Ensure you've set up the `reactHost` in AppDelegate (see iOS Setup above)
+1. Ensure you've called `PasteInputModule.setup` in your AppDelegate (see iOS Setup above)
 2. Make sure you've run `pod install` after adding the library
 3. Clean build folder and rebuild: `cd ios && rm -rf build && cd .. && npx react-native run-ios`
 

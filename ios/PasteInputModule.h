@@ -8,6 +8,7 @@
 
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
+#import <React-RCTAppDelegate/RCTRootViewFactory.h>
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <PasteTextInputSpecs/PasteTextInputSpecs.h>
@@ -17,14 +18,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 #ifdef RCT_NEW_ARCH_ENABLED
 @interface PasteInputModule : RCTEventEmitter <NativePasteInputModuleSpec>
-
-// Static method to set the reactHost for bridgeless mode
-// This must be called from AppDelegate after creating the reactHost
-+ (void)setReactHost:(nullable id)reactHost;
-
 #else
 @interface PasteInputModule : RCTEventEmitter <RCTBridgeModule>
 #endif
+
++ (void)setup:(nonnull RCTRootViewFactory *)rootViewFactory;
 
 @end
 

@@ -36,10 +36,7 @@ static BOOL pasteInputCanPerformActionIMP(id self, SEL _cmd, SEL action, id send
 @property (nonatomic, strong) NSMutableDictionary<NSString *, UIView *> *registeredViews;
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
-// Static variable to store the reactHost reference
 static id _reactHost = nil;
-#endif
 
 @implementation PasteInputModule
 
@@ -50,12 +47,12 @@ RCT_EXPORT_MODULE()
     return YES;
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
-+ (void)setReactHost:(id)reactHost
++ (void)setup:(RCTRootViewFactory *)rootViewFactory
 {
-    _reactHost = reactHost;
-}
+#ifdef RCT_NEW_ARCH_ENABLED
+    _reactHost = rootViewFactory.reactHost;
 #endif
+}
 
 - (instancetype)init
 {
