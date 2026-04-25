@@ -27,6 +27,6 @@
     "target": "esnext",
   },
   "extends": "@react-native/typescript-config",
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["**/node_modules", "**/Pods", "example"]
 }
