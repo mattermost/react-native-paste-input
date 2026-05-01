@@ -1,6 +1,5 @@
 package com.mattermost.pasteinputtext
 
-import android.text.InputType
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.common.MapBuilder
@@ -35,14 +34,9 @@ class PasteTextInputManager(context: ReactApplicationContext) : ReactTextInputMa
 
   override fun createViewInstance(context: ThemedReactContext): PasteInputEditText {
     val editText = PasteInputEditText(context)
-    val inputType = editText.inputType
-
-    editText.inputType = inputType and (InputType.TYPE_TEXT_FLAG_MULTI_LINE.inv())
-    editText.returnKeyType = "done"
     val eventDispatcher = getEventDispatcher(mContext, editText)
     editText.customInsertionActionModeCallback = PasteInputActionCallback(editText, disableCopyPaste, eventDispatcher)
     editText.customSelectionActionModeCallback = PasteInputActionCallback(editText, disableCopyPaste, eventDispatcher)
-
     return editText
   }
 
@@ -66,5 +60,6 @@ class PasteTextInputManager(context: ReactApplicationContext) : ReactTextInputMa
   companion object {
     const val NAME = "PasteTextInput"
     const val CACHE_DIR_NAME = "mmPasteInput"
+    private const val TAG = "PasteInput"
   }
 }

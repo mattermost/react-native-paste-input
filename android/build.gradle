@@ -55,3 +55,44 @@ repositories {
 dependencies {
   implementation 'com.facebook.react:react-native:+'
 }
+
+if (isNewArchitectureEnabled()) {
+  // The codegen generates a thin typedef for PasteTextInputShadowNode that lacks
+  // MeasurableYogaNode, so Yoga never calls measureContent() and multiline auto-resize
+  // never works. After codegen runs we overwrite the generated files with our versions
+  // from src/codegen-patch/, which wire up the full AndroidTextInput shadow node
+  // machinery (MeasurableYogaNode traits + TextLayoutManager injection via adopt()).
+  afterEvaluate {
+    def patchTask = tasks.register("patchPasteTextInputCodegen") {
+      def patchSrcDir = file("src/codegen-patch/react/renderer/components/PasteTextInputSpecs")
+      def codegenDir = layout.buildDirectory.dir(
+          "generated/source/codegen/jni/react/renderer/components/PasteTextInputSpecs"
+      ).get().asFile
+
+      inputs.dir(patchSrcDir)
+      inputs.dir(codegenDir).optional()
+      outputs.upToDateWhen { false }
+
+      doLast {
+        if (!codegenDir.exists()) {
+          logger.warn("[PasteInput] codegen dir not found – skipping patch")
+          return
+        }
+
+        ["ShadowNodes.h", "ShadowNodes.cpp", "ComponentDescriptors.h", "ComponentDescriptors.cpp"].each { name ->
+          def src = new File(patchSrcDir, name)
+          def dst = new File(codegenDir, name)
+          dst.text = src.text
+        }
+
+        logger.lifecycle("[PasteInput] Patched ShadowNodes.h/.cpp and ComponentDescriptors.h/.cpp")
+      }
+    }
+
+    tasks.configureEach { task ->
+      if (task.name == "generateCodegenArtifactsFromSchema") {
+        task.finalizedBy(patchTask)
+      }
+    }
+  }
+}

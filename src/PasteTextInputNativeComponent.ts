@@ -199,7 +199,6 @@ export interface NativeProps extends ViewProps {
     returnKeyType?: WithDefault<ReturnKeyType, 'done'>;
     scrollEnabled?: boolean;
     secureTextEntry?: boolean;
-    selection?: Readonly<{ start: Int32; end?: Int32 }>;
     selectionColor?: ColorValue;
     selectionHandleColor?: ColorValue;
     selectTextOnFocus?: boolean;

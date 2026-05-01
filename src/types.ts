@@ -2,12 +2,12 @@ import type { ForwardedRef } from 'react';
 import type { HostComponent, TextInputProps } from 'react-native';
 import type { Int32 } from 'react-native/Libraries/Types/CodegenTypes';
 
-export type PasteTextInputInstance = React.ElementRef<
-    HostComponent<PasteInputProps>
-> & {
+type HostInstance = InstanceType<HostComponent<PasteInputProps>>;
+
+export type PasteTextInputInstance = HostInstance & {
     clear: () => void;
     isFocused: () => boolean;
-    getNativeRef?: () => React.ElementRef<HostComponent<PasteInputProps>>;
+    getNativeRef?: () => HostInstance;
     setSelection: (start: number, end: number) => void;
 };
 
@@ -38,6 +38,10 @@ export type SmartPunctuation = 'default' | 'enable' | 'disable';
  */
 export interface PasteInputProps extends TextInputProps {
     forwardedRef?: ForwardedRef<PasteTextInputInstance>;
+    /**
+     * Maps to numberOfLines on Android. Mirrors the HTML rows attribute.
+     */
+    rows?: number;
     /**
      * Disable copy, cut, and paste actions
      */
