@@ -8,7 +8,12 @@
 
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
+#if __has_include(<React-RCTAppDelegate/RCTRootViewFactory.h>)
 #import <React-RCTAppDelegate/RCTRootViewFactory.h>
+#else
+#import "React_RCTAppDelegate/RCTRootViewFactory.h"
+#endif
+
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <PasteTextInputSpecs/PasteTextInputSpecs.h>
