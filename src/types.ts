@@ -57,7 +57,7 @@ export interface PasteInputProps extends TextInputProps {
      * @param error - Error message if paste failed, null otherwise
      * @param files - Array of pasted files
      */
-    onPaste(error: string | null | undefined, files: Array<PastedFile>): void;
+    onPaste?(error: string | null | undefined, files: Array<PastedFile>): void;
 }
 
 export interface Selection {

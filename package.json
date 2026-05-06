@@ -30,7 +30,7 @@
     "test": "jest",
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "prepare": "bob build && (test -d .git && husky || true)",
+    "prepare": "bob build && husky",
     "release": "release-it",
     "example": "cd example && npm",
     "pods": "cd example && RCT_NEW_ARCH_ENABLED=1 pod-install --quiet",
@@ -123,7 +123,7 @@
     "type": "all",
     "jsSrcsDir": "src",
     "android": {
-      "javaPackageName": "com.mattermost.pastetextinput"
+      "javaPackageName": "com.mattermost.pasteinputtext"
     },
     "ios": {
       "componentProvider": {

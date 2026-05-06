@@ -54,6 +54,13 @@ function PasteInputIOSComponent(
 
     const textInputRef = useRef<TextInput>(null);
     const nativeIDRef = useRef<string | null>(null);
+    const onPasteRef = useRef(onPaste);
+
+    // Keep the ref pointed at the latest onPaste so the event listener
+    // (registered once on mount) always calls the current handler.
+    useEffect(() => {
+        onPasteRef.current = onPaste;
+    }, [onPaste]);
 
     // Expose the TextInput ref to parent components (same as Android)
     // TextInput already has all methods from PasteTextInputInstance (clear, isFocused, setSelection)
@@ -101,8 +108,8 @@ function PasteInputIOSComponent(
                 error?: string;
             }) => {
                 // Only handle events for this instance
-                if (event.nativeID === nativeID && onPaste) {
-                    onPaste(event.error || null, event.data);
+                if (event.nativeID === nativeID) {
+                    onPasteRef.current?.(event.error || null, event.data);
                 }
             }
         );

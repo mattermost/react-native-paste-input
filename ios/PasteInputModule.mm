@@ -34,6 +34,9 @@ static BOOL pasteInputCanPerformActionIMP(id self, SEL _cmd, SEL action, id send
 
 @interface PasteInputModule ()
 @property (nonatomic, strong) NSMutableDictionary<NSString *, UIView *> *registeredViews;
+// Bumped on every register/unregister so in-flight retry blocks for an older
+// generation can detect that they're stale and bail out.
+@property (nonatomic, strong) NSMutableDictionary<NSString *, NSNumber *> *registrationGenerations;
 @end
 
 static id _reactHost = nil;
@@ -58,6 +61,7 @@ RCT_EXPORT_MODULE()
 {
     if (self = [super init]) {
         _registeredViews = [NSMutableDictionary new];
+        _registrationGenerations = [NSMutableDictionary new];
     }
     return self;
 }
@@ -93,13 +97,23 @@ RCT_EXPORT_MODULE()
         @"smartPunctuation": config.smartPunctuation() ?: @"default"
     };
 
+    // Bump the generation so any retries from a prior register/unregister cycle
+    // for the same nativeID notice they're stale and bail out.
+    NSInteger generation = [self.registrationGenerations[nativeID] integerValue] + 1;
+    self.registrationGenerations[nativeID] = @(generation);
+
     // Try to find the view with retry logic (view might not be mounted yet)
-    [self findAndRegisterViewWithTag:viewRef nativeID:nativeID config:configDict retryCount:0];
+    [self findAndRegisterViewWithTag:viewRef nativeID:nativeID config:configDict retryCount:0 generation:generation];
 }
 
-- (void)findAndRegisterViewWithTag:(NSNumber *)viewRef nativeID:(NSString *)nativeID config:(NSDictionary *)configDict retryCount:(NSInteger)retryCount
+- (void)findAndRegisterViewWithTag:(NSNumber *)viewRef nativeID:(NSString *)nativeID config:(NSDictionary *)configDict retryCount:(NSInteger)retryCount generation:(NSInteger)generation
 {
     dispatch_async(dispatch_get_main_queue(), ^{
+        // Bail if a newer register/unregister has invalidated this attempt.
+        if ([self.registrationGenerations[nativeID] integerValue] != generation) {
+            return;
+        }
+
         UIView *view = [self findBackingTextViewForTag:viewRef];
         if (view) {
             // Store the view using nativeID as key
@@ -110,7 +124,7 @@ RCT_EXPORT_MODULE()
         } else if (retryCount < 10) {
             // Retry after a short delay (view might not be mounted yet)
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self findAndRegisterViewWithTag:viewRef nativeID:nativeID config:configDict retryCount:retryCount + 1];
+                [self findAndRegisterViewWithTag:viewRef nativeID:nativeID config:configDict retryCount:retryCount + 1 generation:generation];
             });
         }
     });
@@ -122,6 +136,9 @@ RCT_EXPORT_MODULE()
 - (void)unregisterTextInput:(NSString *)nativeID
 {
     dispatch_async(dispatch_get_main_queue(), ^{
+        // Invalidate any pending retries for this nativeID.
+        [self.registrationGenerations removeObjectForKey:nativeID];
+
         UIView *view = self.registeredViews[nativeID];
         if (view) {
             [self removeDynamicSubclassing:view];
