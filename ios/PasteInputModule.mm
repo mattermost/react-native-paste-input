@@ -386,13 +386,14 @@ static void pasteInputInterceptedPasteIMP(id self, SEL _cmd, id sender)
     NSString *nativeID = objc_getAssociatedObject(self, kPasteInputNativeIDKey);
     Class originalClass = objc_getAssociatedObject(self, kOriginalClassKey);
 
-    if (!module || !nativeID || !originalClass) {
-        // Fallback to super implementation
-        struct objc_super superData = {
-            .receiver = self,
-            .super_class = originalClass
-        };
-        ((void(*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&superData, _cmd, sender);
+    if (!module || !nativeID) {
+        if (originalClass) {
+            struct objc_super superData = {
+                .receiver = self,
+                .super_class = originalClass
+            };
+            ((void(*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&superData, _cmd, sender);
+        }
         return;
     }
 
