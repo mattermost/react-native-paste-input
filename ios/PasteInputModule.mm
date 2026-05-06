@@ -27,6 +27,8 @@ static const char *kOriginalClassKey = "PasteInputOriginalClass";
 static const char *kPasteInputConfigKey = "PasteInputConfig";
 static const char *kPasteInputModuleKey = "PasteInputModule";
 static const char *kPasteInputNativeIDKey = "PasteInputNativeID";
+static const char *kOriginalSmartQuotesKey = "PasteInputOriginalSmartQuotes";
+static const char *kOriginalSmartDashesKey = "PasteInputOriginalSmartDashes";
 
 // Forward declarations for IMP functions
 static void pasteInputInterceptedPasteIMP(id self, SEL _cmd, id sender);
@@ -97,37 +99,40 @@ RCT_EXPORT_MODULE()
         @"smartPunctuation": config.smartPunctuation() ?: @"default"
     };
 
-    // Bump the generation so any retries from a prior register/unregister cycle
-    // for the same nativeID notice they're stale and bail out.
-    NSInteger generation = [self.registrationGenerations[nativeID] integerValue] + 1;
-    self.registrationGenerations[nativeID] = @(generation);
+    // All access to registrationGenerations / registeredViews must happen on
+    // the main queue — TurboModule methods aren't guaranteed to run there.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // Bump the generation so any retries from a prior register/unregister
+        // cycle for the same nativeID notice they're stale and bail out.
+        NSInteger generation = [self.registrationGenerations[nativeID] integerValue] + 1;
+        self.registrationGenerations[nativeID] = @(generation);
 
-    // Try to find the view with retry logic (view might not be mounted yet)
-    [self findAndRegisterViewWithTag:viewRef nativeID:nativeID config:configDict retryCount:0 generation:generation];
+        // Try to find the view with retry logic (view might not be mounted yet)
+        [self findAndRegisterViewWithTag:viewRef nativeID:nativeID config:configDict retryCount:0 generation:generation];
+    });
 }
 
+// Must be called on the main queue.
 - (void)findAndRegisterViewWithTag:(NSNumber *)viewRef nativeID:(NSString *)nativeID config:(NSDictionary *)configDict retryCount:(NSInteger)retryCount generation:(NSInteger)generation
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // Bail if a newer register/unregister has invalidated this attempt.
-        if ([self.registrationGenerations[nativeID] integerValue] != generation) {
-            return;
-        }
+    // Bail if a newer register/unregister has invalidated this attempt.
+    if ([self.registrationGenerations[nativeID] integerValue] != generation) {
+        return;
+    }
 
-        UIView *view = [self findBackingTextViewForTag:viewRef];
-        if (view) {
-            // Store the view using nativeID as key
-            self.registeredViews[nativeID] = view;
+    UIView *view = [self findBackingTextViewForTag:viewRef];
+    if (view) {
+        // Store the view using nativeID as key
+        self.registeredViews[nativeID] = view;
 
-            // Apply dynamic subclassing for paste interception
-            [self applyDynamicSubclassing:view config:configDict nativeID:nativeID];
-        } else if (retryCount < 10) {
-            // Retry after a short delay (view might not be mounted yet)
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self findAndRegisterViewWithTag:viewRef nativeID:nativeID config:configDict retryCount:retryCount + 1 generation:generation];
-            });
-        }
-    });
+        // Apply dynamic subclassing for paste interception
+        [self applyDynamicSubclassing:view config:configDict nativeID:nativeID];
+    } else if (retryCount < 10) {
+        // Retry after a short delay (view might not be mounted yet)
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self findAndRegisterViewWithTag:viewRef nativeID:nativeID config:configDict retryCount:retryCount + 1 generation:generation];
+        });
+    }
 }
 
 /**
@@ -337,12 +342,23 @@ RCT_EXPORT_MODULE()
     objc_setAssociatedObject(view, kPasteInputModuleKey, self, OBJC_ASSOCIATION_ASSIGN);
     objc_setAssociatedObject(view, kPasteInputNativeIDKey, nativeID, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 
+    // Save original smart-punctuation values so we can restore them on unregister
+    // (Fabric may recycle the underlying UITextView/UITextField for an unrelated TextInput).
+    if ([view isKindOfClass:[UITextView class]]) {
+        UITextView *textView = (UITextView *)view;
+        objc_setAssociatedObject(view, kOriginalSmartQuotesKey, @(textView.smartQuotesType), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(view, kOriginalSmartDashesKey, @(textView.smartDashesType), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    } else if ([view isKindOfClass:[UITextField class]]) {
+        UITextField *textField = (UITextField *)view;
+        objc_setAssociatedObject(view, kOriginalSmartQuotesKey, @(textField.smartQuotesType), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(view, kOriginalSmartDashesKey, @(textField.smartDashesType), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+
     // Apply smartPunctuation setting to UITextView/UITextField
     [self applySmartPunctuationSettings:view config:config];
 
-    // Create dynamic subclass name
     NSString *className = NSStringFromClass(originalClass);
-    NSString *dynamicClassName = [NSString stringWithFormat:@"PasteInput_%@_%p", className, view];
+    NSString *dynamicClassName = [NSString stringWithFormat:@"PasteInput_%@", className];
 
     // Check if dynamic class already exists
     Class dynamicClass = NSClassFromString(dynamicClassName);
@@ -384,10 +400,26 @@ RCT_EXPORT_MODULE()
     Class originalClass = objc_getAssociatedObject(view, kOriginalClassKey);
     if (originalClass) {
         object_setClass(view, originalClass);
+
+        // Restore original smart-punctuation values
+        NSNumber *origQuotes = objc_getAssociatedObject(view, kOriginalSmartQuotesKey);
+        NSNumber *origDashes = objc_getAssociatedObject(view, kOriginalSmartDashesKey);
+        if ([view isKindOfClass:[UITextView class]]) {
+            UITextView *textView = (UITextView *)view;
+            if (origQuotes) textView.smartQuotesType = (UITextSmartQuotesType)origQuotes.integerValue;
+            if (origDashes) textView.smartDashesType = (UITextSmartDashesType)origDashes.integerValue;
+        } else if ([view isKindOfClass:[UITextField class]]) {
+            UITextField *textField = (UITextField *)view;
+            if (origQuotes) textField.smartQuotesType = (UITextSmartQuotesType)origQuotes.integerValue;
+            if (origDashes) textField.smartDashesType = (UITextSmartDashesType)origDashes.integerValue;
+        }
+
         objc_setAssociatedObject(view, kOriginalClassKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         objc_setAssociatedObject(view, kPasteInputConfigKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         objc_setAssociatedObject(view, kPasteInputModuleKey, nil, OBJC_ASSOCIATION_ASSIGN);
         objc_setAssociatedObject(view, kPasteInputNativeIDKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(view, kOriginalSmartQuotesKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(view, kOriginalSmartDashesKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
 }
 
@@ -414,45 +446,13 @@ static void pasteInputInterceptedPasteIMP(id self, SEL _cmd, id sender)
         return;
     }
 
-    // Check for files in pasteboard
+    // Try to extract files from the pasteboard. If nothing extractable, fall
+    // back to the system paste handler — that's our signal that the pasteboard
+    // only contained text/rich-text representations.
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    NSArray<NSDictionary *> *files = [pasteboard getCopiedFiles];
 
-    // Quick check: Detect if pasteboard contains actual file data (images, documents, etc.)
-    // Use hasImages as a fast indicator, then verify there's actual file content
-    BOOL hasFileData = NO;
-
-    // Check if pasteboard has images (most common file paste case)
-    if (pasteboard.hasImages) {
-        hasFileData = YES;
-    } else {
-        // For other file types, check pasteboard items
-        // Exclude rich text formats (HTML, RTF, RTFD) which are just text representations
-        NSArray<NSDictionary<NSString *, id> *> *items = pasteboard.items;
-
-        for (NSDictionary *item in items) {
-            for (NSString *type in item.allKeys) {
-                // Skip text and rich text format types - these are not files
-                if ([type isEqual:@"public.utf8-plain-text"] ||
-                    [type isEqual:@"public.plain-text"] ||
-                    [type isEqual:@"public.text"] ||
-                    [type isEqual:@"public.html"] ||
-                    [type isEqual:@"public.rtf"] ||
-                    [type isEqual:@"com.apple.flat-rtfd"] ||
-                    [type isEqual:@"public.url"] ||
-                    [type hasPrefix:@"org.chromium."]) {
-                    continue;
-                }
-
-                // Found a non-text type, likely a file
-                hasFileData = YES;
-                break;
-            }
-            if (hasFileData) break;
-        }
-    }
-
-    // If no file data found (only text/rich-text), call original paste for text
-    if (!hasFileData) {
+    if (files.count == 0) {
         struct objc_super superData = {
             .receiver = self,
             .super_class = originalClass
@@ -461,50 +461,35 @@ static void pasteInputInterceptedPasteIMP(id self, SEL _cmd, id sender)
         return;
     }
 
-    // Pasteboard contains file data - do full extraction
-    NSArray<NSDictionary *> *files = [pasteboard getCopiedFiles];
-
-    if (files && files.count > 0) {
-        // Emit event to JS
-        // Check if any file dictionary contains an error and capture it
-        NSString *error = nil;
-        for (NSDictionary *fileInfo in files) {
-            id errVal = fileInfo[@"error"]; // expecting string or NSNull
-            if (errVal && errVal != [NSNull null]) {
-                if ([errVal isKindOfClass:[NSString class]]) {
-                    NSString *errStr = (NSString *)errVal;
-                    if (errStr.length > 0) {
-                        error = errStr;
-                        break; // take the first non-empty error
-                    }
-                } else {
-                    // If error is not a string, serialize its description
-                    error = [errVal description];
-                    if (error.length > 0) {
-                        break;
-                    }
+    // Capture the first non-empty per-file error (e.g. failure to write to disk).
+    NSString *error = nil;
+    for (NSDictionary *fileInfo in files) {
+        id errVal = fileInfo[@"error"];
+        if (errVal && errVal != [NSNull null]) {
+            if ([errVal isKindOfClass:[NSString class]]) {
+                NSString *errStr = (NSString *)errVal;
+                if (errStr.length > 0) {
+                    error = errStr;
+                    break;
+                }
+            } else {
+                error = [errVal description];
+                if (error.length > 0) {
+                    break;
                 }
             }
         }
-
-        // Build payload and include error if present
-        NSMutableDictionary *payload = [@{
-            @"nativeID": nativeID,
-            @"data": files,
-        } mutableCopy];
-        if (error) {
-            payload[@"error"] = error;
-        }
-
-        [module sendEventWithName:@"onPaste" body:payload];
-    } else {
-        // No files, call original paste (for text)
-        struct objc_super superData = {
-            .receiver = self,
-            .super_class = originalClass
-        };
-        ((void(*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&superData, _cmd, sender);
     }
+
+    NSMutableDictionary *payload = [@{
+        @"nativeID": nativeID,
+        @"data": files,
+    } mutableCopy];
+    if (error) {
+        payload[@"error"] = error;
+    }
+
+    [module sendEventWithName:@"onPaste" body:payload];
 }
 
 /**
