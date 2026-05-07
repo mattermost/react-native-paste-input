@@ -10,5 +10,5 @@ class PasteTextInputPackage : ReactPackage {
     listOf(PasteTextInputManager(reactContext))
 
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> =
-    emptyList()
+    listOf(PasteInputModule(reactContext))
 }

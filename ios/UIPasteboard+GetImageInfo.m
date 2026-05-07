@@ -25,12 +25,19 @@
       }
 
       NSString *type = item.allKeys[j];
-    
+
+      // Skip representations that aren't raw bytes (e.g. NSString/NSURL).
+      // Image types are exceptions: their values are UIImage/NSData fetched via helpers below.
+      if (![item[type] isKindOfClass:[NSData class]] &&
+          ![type isEqual:@"public.jpeg"] && ![type isEqual:@"public.png"] &&
+          ![type isEqual:@"com.compuserve.gif"] && ![type isEqual:@"public.heic"]) {
+        continue;
+      }
 
       @try {
         NSString *uri = self.string;
         NSData *fileData = item[type];
-        
+
         if ([type isEqual:@"public.jpeg"] || [type isEqual:@"public.png"]) {
           fileData = [self getDataForImageItem:item[type] type:type];
         } else if ([type isEqual:@"com.compuserve.gif"] || [type isEqual:@"public.heic"]) {

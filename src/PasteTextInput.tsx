@@ -1,4 +1,5 @@
 import * as React from 'react';
+import invariant from 'invariant';
 import PasteTextInputNativeComponent, {
     Commands,
 } from './PasteTextInputNativeComponent';
@@ -11,16 +12,13 @@ import type {
 } from './types';
 import {
     Platform,
-    StyleSheet,
+    Text,
     type HostComponent,
     type KeyboardTypeOptions,
     type NativeSyntheticEvent,
     type NativeTouchEvent,
     type ReturnKeyTypeOptions,
-    type TextInputChangeEventData,
-    type TextInputFocusEventData,
-    type TextInputScrollEventData,
-    type TextInputSelectionChangeEventData,
+    type TextInputProps,
 } from 'react-native';
 
 import TextAncestor from 'react-native/Libraries/Text/TextAncestor';
@@ -41,12 +39,14 @@ function useMergeRefs<Instance>(
                     if (typeof ref === 'function') {
                         ref(current);
                     } else {
-                        ref.current = current;
+                        (
+                            ref as React.MutableRefObject<Instance | null>
+                        ).current = current;
                     }
                 }
             }
         },
-        [...refs] // eslint-disable-line react-hooks/exhaustive-deps
+        [...refs]
     );
 }
 
@@ -62,14 +62,14 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
         tabIndex,
         'selection': propsSelection,
         selectionColor,
-        // selectionHandleColor,
-        // cursorColor,
+        selectionHandleColor,
+        cursorColor,
         ...otherProps
     } = props;
 
-    const inputRef = React.useRef<null | React.ElementRef<HostComponent<any>>>(
-        null
-    );
+    const inputRef = React.useRef<null | React.ElementRef<
+        HostComponent<unknown>
+    >>(null);
 
     const selection: Selection | null = React.useMemo(
         () =>
@@ -88,7 +88,7 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
         string | undefined
     >(props.value);
     const [lastNativeSelectionState, setLastNativeSelection] = React.useState<{
-        selection: Selection;
+        selection: Required<Selection>;
         mostRecentEventCount: number;
     }>({
         selection: { start: -1, end: -1 },
@@ -96,18 +96,19 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
     });
 
     const lastNativeSelection = lastNativeSelectionState.selection;
+
     const text =
         typeof props.value === 'string'
             ? props.value
             : typeof props.defaultValue === 'string'
               ? props.defaultValue
-              : '';
+              : undefined;
 
-    // This is necessary in case native updates the text and JS decides
-    // that the update should be ignored and we should stick with the value
-    // that we have in JS.
     React.useLayoutEffect(() => {
-        const nativeUpdate: { text?: string; selection?: Selection } = {};
+        const nativeUpdate: {
+            text?: string;
+            selection?: Required<Selection>;
+        } = {};
 
         if (lastNativeText !== props.value && typeof props.value === 'string') {
             nativeUpdate.text = props.value;
@@ -120,8 +121,11 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
             (lastNativeSelection.start !== selection.start ||
                 lastNativeSelection.end !== selection.end)
         ) {
-            nativeUpdate.selection = selection;
-            setLastNativeSelection({ selection, mostRecentEventCount });
+            nativeUpdate.selection = selection as Required<Selection>;
+            setLastNativeSelection({
+                selection: selection as Required<Selection>,
+                mostRecentEventCount,
+            });
         }
 
         if (Object.keys(nativeUpdate).length === 0) {
@@ -170,7 +174,8 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
         (instance: PasteTextInputInstance | null) => {
             inputRef.current = instance;
             if (instance != null) {
-                // $FlowFixMe[incompatible-use] - See the explanation above.
+                TextInputState.registerInput(instance);
+
                 Object.assign(instance, {
                     clear(): void {
                         if (inputRef.current != null) {
@@ -183,7 +188,6 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
                             );
                         }
                     },
-                    // TODO: Fix this returning true on null === null, when no input is focused
                     isFocused(): boolean {
                         return (
                             TextInputState.currentlyFocusedInput() ===
@@ -191,7 +195,7 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
                         );
                     },
                     getNativeRef(): null | React.ElementRef<
-                        HostComponent<any>
+                        HostComponent<unknown>
                     > {
                         return inputRef.current;
                     },
@@ -218,34 +222,32 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
     );
 
     const _onChange = (
-        event: NativeSyntheticEvent<TextInputChangeEventData>
+        event: Parameters<NonNullable<TextInputProps['onChange']>>[0]
     ) => {
         const currentText = event.nativeEvent.text;
         props.onChange && props.onChange(event);
         props.onChangeText && props.onChangeText(currentText);
 
         if (inputRef.current == null) {
-            // calling `props.onChange` or `props.onChangeText`
-            // may clean up the input itself. Exits here.
             return;
         }
 
         setLastNativeText(currentText);
-        // This must happen last, after we call setLastNativeText.
-        // Different ordering can cause bugs when editing AndroidTextInputs
-        // with multiple Fragments.
-        // We must update this so that controlled input updates work.
         setMostRecentEventCount(event.nativeEvent.eventCount);
     };
 
-    const _onBlur = (event: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    const _onBlur = (
+        event: Parameters<NonNullable<TextInputProps['onBlur']>>[0]
+    ) => {
         TextInputState.blurInput(inputRef.current);
         if (props.onBlur) {
             props.onBlur(event);
         }
     };
 
-    const _onFocus = (event: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    const _onFocus = (
+        event: Parameters<NonNullable<TextInputProps['onFocus']>>[0]
+    ) => {
         TextInputState.focusInput(inputRef.current);
         if (props.onFocus) {
             props.onFocus(event);
@@ -260,19 +262,17 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
     };
 
     const _onScroll = (
-        event: NativeSyntheticEvent<TextInputScrollEventData>
+        event: Parameters<NonNullable<TextInputProps['onScroll']>>[0]
     ) => {
         props.onScroll && props.onScroll(event);
     };
 
     const _onSelectionChange = (
-        event: NativeSyntheticEvent<TextInputSelectionChangeEventData>
+        event: Parameters<NonNullable<TextInputProps['onSelectionChange']>>[0]
     ) => {
         props.onSelectionChange && props.onSelectionChange(event);
 
         if (inputRef.current == null) {
-            // calling `props.onSelectionChange`
-            // may clean up the input itself. Exits here.
             return;
         }
 
@@ -286,9 +286,7 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
 
     let submitBehavior: SubmitBehavior;
     if (props.submitBehavior != null) {
-        // `submitBehavior` is set explicitly
         if (!multiline && props.submitBehavior === 'newline') {
-            // For single line text inputs, `'newline'` is not a valid option
             submitBehavior = 'blurAndSubmit';
         } else {
             submitBehavior = props.submitBehavior;
@@ -300,7 +298,6 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
             submitBehavior = 'newline';
         }
     } else {
-        // Single line
         if (props.blurOnSubmit !== false) {
             submitBehavior = 'blurAndSubmit';
         } else {
@@ -311,14 +308,7 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
     const accessible = props.accessible !== false;
     const focusable = props.focusable !== false;
 
-    const {
-        editable,
-        hitSlop,
-        onPress,
-        onPressIn,
-        onPressOut,
-        rejectResponderTermination,
-    } = props;
+    const { editable, hitSlop, onPress, onPressIn, onPressOut } = props;
 
     const config = React.useMemo(
         () => ({
@@ -333,32 +323,28 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
             },
             onPressIn: onPressIn,
             onPressOut: onPressOut,
-            cancelable:
-                Platform.OS === 'ios' ? !rejectResponderTermination : null,
+            cancelable: null, // Android does not use this
         }),
-        [
-            editable,
-            hitSlop,
-            onPress,
-            onPressIn,
-            onPressOut,
-            rejectResponderTermination,
-        ]
+        [editable, hitSlop, onPress, onPressIn, onPressOut]
     );
 
-    // Hide caret during test runs due to a flashing caret
-    // makes screenshot tests flakey
     let caretHidden = props.caretHidden;
     if (Platform.isTesting) {
         caretHidden = true;
     }
 
-    // TextInput handles onBlur and onFocus events
-    // so omitting onBlur and onFocus pressability handlers here.
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { onBlur, onFocus, ...eventHandlers } = usePressability(config) || {};
 
-    let _accessibilityState;
+    let _accessibilityState:
+        | {
+              busy?: boolean;
+              checked?: boolean | 'mixed';
+              disabled?: boolean;
+              expanded?: boolean;
+              selected?: boolean;
+          }
+        | undefined;
     if (
         accessibilityState != null ||
         ariaBusy != null ||
@@ -376,29 +362,82 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
         };
     }
 
+    // Keep original (potentially nested) style; only flatten to check for overrides
+    let _style = props.style;
     // @ts-ignore
-    const style = flattenStyle<TextStyleProp>(props.style);
+    const flattenedStyle = flattenStyle(props.style);
+    if (flattenedStyle != null) {
+        let overrides: Record<string, unknown> | null = null;
 
-    const useMultilineDefaultStyle =
-        props.multiline === true &&
-        (style == null ||
-            (style.padding == null &&
-                style.paddingVertical == null &&
-                style.paddingTop == null));
+        if (typeof flattenedStyle.fontWeight === 'number') {
+            overrides = overrides ?? {};
+            overrides.fontWeight = flattenedStyle.fontWeight.toString();
+        }
+
+        if (flattenedStyle.verticalAlign != null) {
+            overrides = overrides ?? {};
+            overrides.textAlignVertical =
+                verticalAlignToTextAlignVerticalMap[
+                    flattenedStyle.verticalAlign as keyof typeof verticalAlignToTextAlignVerticalMap
+                ];
+            overrides.verticalAlign = undefined;
+        }
+
+        if (overrides != null) {
+            _style = [_style, overrides];
+        }
+    }
+
+    const _accessibilityLabel =
+        props?.['aria-label'] ?? props?.accessibilityLabel;
+    const _accessibilityLabelledBy =
+        props?.['aria-labelledby'] ?? props?.accessibilityLabelledBy;
+    const _importantForAccessibility =
+        props['aria-hidden'] === true
+            ? ('no-hide-descendants' as const)
+            : undefined;
+    const autoCapitalize = props.autoCapitalize || 'sentences';
+    const placeholder = props.placeholder ?? '';
+
+    let children = props.children;
+    const childCount = React.Children.count(children);
+    invariant(
+        !(props.value != null && childCount),
+        'Cannot specify both value and children.'
+    );
+    if (childCount > 1) {
+        children = <Text>{children}</Text>;
+    }
+
+    const colorProps = {
+        selectionColor,
+        selectionHandleColor:
+            selectionHandleColor === undefined
+                ? selectionColor
+                : selectionHandleColor,
+        cursorColor: cursorColor === undefined ? selectionColor : cursorColor,
+    };
 
     const textInput = (
         <PasteTextInputNativeComponent
             ref={ref}
             {...otherProps}
+            {...colorProps}
             {...eventHandlers}
+            accessibilityLabel={_accessibilityLabel}
+            accessibilityLabelledBy={_accessibilityLabelledBy}
             accessibilityState={_accessibilityState}
             accessible={accessible}
+            autoCapitalize={autoCapitalize}
             submitBehavior={submitBehavior}
             caretHidden={caretHidden}
-            dataDetectorTypes={props.dataDetectorTypes}
+            children={children}
+            disableFullscreenUI={props.disableFullscreenUI}
             focusable={tabIndex !== undefined ? !tabIndex : focusable}
+            importantForAccessibility={_importantForAccessibility}
             mostRecentEventCount={mostRecentEventCount}
             nativeID={id ?? props.nativeID}
+            numberOfLines={props.rows ?? props.numberOfLines}
             onBlur={_onBlur}
             onChange={_onChange}
             onContentSizeChange={props.onContentSizeChange}
@@ -407,20 +446,15 @@ function InternalTextInput(props: PasteInputProps): React.ReactNode {
             onScroll={_onScroll}
             onSelectionChange={_onSelectionChange}
             onSelectionChangeShouldSetResponder={emptyFunctionThatReturnsTrue}
-            selection={selection}
-            selectionColor={selectionColor}
-            style={StyleSheet.compose(
-                useMultilineDefaultStyle ? styles.multilineDefault : null,
-                style
-            )}
+            placeholder={placeholder}
+            style={_style}
             text={text}
+            textBreakStrategy={props.textBreakStrategy}
         />
     );
 
     return (
-        <TextAncestor.Provider value={true}>
-            {textInput}
-        </TextAncestor.Provider>
+        <TextAncestor.Provider value={true}>{textInput}</TextAncestor.Provider>
     );
 }
 
@@ -440,12 +474,11 @@ const inputModeToKeyboardTypeMap: Record<string, KeyboardTypeOptions> = {
     decimal: 'decimal-pad',
     numeric: 'number-pad',
     tel: 'phone-pad',
-    search: Platform.OS === 'ios' ? 'web-search' : 'default',
+    search: 'default', // Android has no web-search keyboard type
     email: 'email-address',
     url: 'url',
 };
 
-// Map HTML autocomplete values to Android autoComplete values
 const autoCompleteWebToAutoCompleteAndroidMap: Record<string, string> = {
     'address-line1': 'postal-address-region',
     'address-line2': 'postal-address-locality',
@@ -479,60 +512,18 @@ const autoCompleteWebToAutoCompleteAndroidMap: Record<string, string> = {
     'username': 'username',
 };
 
-// Map HTML autocomplete values to iOS textContentType values
-const autoCompleteWebToTextContentTypeMap = {
-    'address-line1': 'streetAddressLine1',
-    'address-line2': 'streetAddressLine2',
-    'bday': 'birthdate',
-    'bday-day': 'birthdateDay',
-    'bday-month': 'birthdateMonth',
-    'bday-year': 'birthdateYear',
-    'cc-csc': 'creditCardSecurityCode',
-    'cc-exp-month': 'creditCardExpirationMonth',
-    'cc-exp-year': 'creditCardExpirationYear',
-    'cc-exp': 'creditCardExpiration',
-    'cc-given-name': 'creditCardGivenName',
-    'cc-additional-name': 'creditCardMiddleName',
-    'cc-family-name': 'creditCardFamilyName',
-    'cc-name': 'creditCardName',
-    'cc-number': 'creditCardNumber',
-    'cc-type': 'creditCardType',
-    'current-password': 'password',
-    'country': 'countryName',
-    'email': 'emailAddress',
-    'name': 'name',
-    'additional-name': 'middleName',
-    'family-name': 'familyName',
-    'given-name': 'givenName',
-    'nickname': 'nickname',
-    'honorific-prefix': 'namePrefix',
-    'honorific-suffix': 'nameSuffix',
-    'new-password': 'newPassword',
-    'off': 'none',
-    'one-time-code': 'oneTimeCode',
-    'organization': 'organizationName',
-    'organization-title': 'jobTitle',
-    'postal-code': 'postalCode',
-    'street-address': 'fullStreetAddress',
-    'tel': 'telephoneNumber',
-    'url': 'URL',
-    'username': 'username',
-};
-
-const verticalAlignToTextAlignVerticalMap: Record<string, string> = {
+const verticalAlignToTextAlignVerticalMap = {
     auto: 'auto',
     top: 'top',
     bottom: 'bottom',
     middle: 'center',
-};
+} as const;
 
 const ExportedForwardRef = React.forwardRef(function PasteTextInput(
     {
         allowFontScaling = true,
-        rejectResponderTermination = true,
         underlineColorAndroid = 'transparent',
         autoComplete,
-        textContentType,
         readOnly,
         editable,
         enterKeyHint,
@@ -544,18 +535,9 @@ const ExportedForwardRef = React.forwardRef(function PasteTextInput(
     }: PasteInputProps,
     forwardedRef: React.ForwardedRef<PasteTextInputInstance>
 ) {
-    let style = flattenStyle(restProps.style);
-
-    if (style?.verticalAlign != null) {
-        style.textAlignVertical =
-            verticalAlignToTextAlignVerticalMap[style.verticalAlign];
-        delete style.verticalAlign;
-    }
-
     return (
         <InternalTextInput
             allowFontScaling={allowFontScaling}
-            rejectResponderTermination={rejectResponderTermination}
             underlineColorAndroid={underlineColorAndroid}
             editable={readOnly !== undefined ? !readOnly : editable}
             returnKeyType={
@@ -570,38 +552,16 @@ const ExportedForwardRef = React.forwardRef(function PasteTextInput(
                 inputMode == null ? showSoftInputOnFocus : inputMode !== 'none'
             }
             autoComplete={
-                Platform.OS === 'android'
-                    ? // @ts-ignore
-                      (autoCompleteWebToAutoCompleteAndroidMap[autoComplete] ??
-                      autoComplete)
-                    : undefined
-            }
-            textContentType={
-                textContentType != null
-                    ? textContentType
-                    : Platform.OS === 'ios' &&
-                        autoComplete &&
-                        autoComplete in autoCompleteWebToTextContentTypeMap
-                      ? // @ts-ignore
-                        autoCompleteWebToTextContentTypeMap[autoComplete]
-                      : textContentType
+                // @ts-ignore
+                (autoCompleteWebToAutoCompleteAndroidMap[autoComplete!] ??
+                    autoComplete) as PasteInputProps['autoComplete']
             }
             {...restProps}
             forwardedRef={forwardedRef}
-            style={style}
         />
     );
 });
 
 ExportedForwardRef.displayName = 'PasteTextInput';
-
-const styles = StyleSheet.create({
-    multilineDefault: {
-        // This default top inset makes RCTMultilineTextInputView seem as close as possible
-        // to single-line RCTSinglelineTextInputView defaults, using the system defaults
-        // of font size 17 and a height of 31 points.
-        paddingTop: 5,
-    },
-});
 
 export default ExportedForwardRef;

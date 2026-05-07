@@ -15,7 +15,7 @@
     "types": ["react-native", "jest"],
     "isolatedModules": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
@@ -26,5 +26,8 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
+    "ignoreDeprecations": "6.0"
   },
+  "extends": "@react-native/typescript-config",
+  "exclude": ["node_modules", "example"]
 }

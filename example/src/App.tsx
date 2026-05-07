@@ -1,14 +1,19 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Platform, StyleSheet, View, Button, Appearance } from 'react-native';
+import { Platform, StyleSheet, Button, Appearance } from 'react-native';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
+import {
+    KeyboardAwareScrollView,
+    KeyboardProvider,
+} from 'react-native-keyboard-controller';
 import PasteInput, {
     type PastedFile,
-    type PasteInputRef,
+    type PasteTextInputInstance,
 } from '@mattermost/react-native-paste-input';
 
 import Details from './Details';
 
 export default function App() {
-    const inputRef = useRef<PasteInputRef>(null);
+    const inputRef = useRef<PasteTextInputInstance>(null);
     const [file, setFile] = useState<PastedFile>();
     const [inputVisible, setInputVisible] = useState<boolean>(true);
     const [color, setColor] = useState(
@@ -43,34 +48,48 @@ export default function App() {
     }, []);
 
     return (
-        <View style={styles.container}>
-            <Details file={file} />
-            {inputVisible && (
-                <PasteInput
-                    ref={inputRef}
-                    disableCopyPaste={false}
-                    onPaste={onPaste}
-                    style={[{ color }, styles.input]}
-                    multiline={true}
-                    placeholder="This is a PasteInput"
-                    submitBehavior="newline"
-                    underlineColorAndroid="transparent"
-                    keyboardType="default"
-                    disableFullscreenUI={true}
-                    textContentType="none"
-                    autoComplete="off"
-                    smartPunctuation="disable"
-                />
-            )}
-            <Button
-                title={inputVisible ? 'Hide Input' : 'Show Input'}
-                onPress={toggleInputVisibility}
-            />
-        </View>
+        <SafeAreaProvider>
+            <KeyboardProvider>
+                <SafeAreaView style={styles.safeArea}>
+                    <KeyboardAwareScrollView
+                        keyboardDismissMode="interactive"
+                        keyboardShouldPersistTaps="handled"
+                        contentContainerStyle={styles.container}
+                        disableScrollOnKeyboardHide={true}
+                    >
+                        <Details file={file} />
+                        {inputVisible && (
+                            <PasteInput
+                                ref={inputRef}
+                                disableCopyPaste={false}
+                                onPaste={onPaste}
+                                style={[{ color }, styles.input]}
+                                multiline={true}
+                                placeholder="This is a PasteInput"
+                                submitBehavior="newline"
+                                underlineColorAndroid="transparent"
+                                keyboardType="default"
+                                disableFullscreenUI={true}
+                                textContentType="none"
+                                autoComplete="off"
+                                smartPunctuation="disable"
+                            />
+                        )}
+                        <Button
+                            title={inputVisible ? 'Hide Input' : 'Show Input'}
+                            onPress={toggleInputVisibility}
+                        />
+                    </KeyboardAwareScrollView>
+                </SafeAreaView>
+            </KeyboardProvider>
+        </SafeAreaProvider>
     );
 }
 
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+    },
     container: {
         flex: 1,
         alignItems: 'center',
@@ -92,6 +111,6 @@ const styles = StyleSheet.create({
         maxHeight: 150,
         borderColor: 'gray',
         borderWidth: 1,
-        width: '90%',
+        width: '95%',
     },
 });

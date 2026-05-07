@@ -5,13 +5,12 @@
  * Metro configuration
  * https://facebook.github.io/metro/docs/configuration
  *
- * @type {import('metro-config').MetroConfig}
+ * @type {import('@react-native/metro-config').MetroConfig}
  */
 
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 const path = require('path');
-const exclusionList = require('metro-config/src/defaults/exclusionList');
-const escape = require('escape-string-regexp');
+const fs = require('fs');
 const pak = require('../package.json');
 
 const root = path.resolve(__dirname, '..');
@@ -24,31 +23,37 @@ const config = {
     projectRoot: __dirname,
     watchFolders: [root],
 
-    // We need to make sure that only one version is loaded for peerDependencies
-    // So we blacklist them at the root, and alias them to the versions in example's node_modules
     resolver: {
-        blacklistRE: exclusionList(
-            modules.map(
-                (m) =>
-                    new RegExp(
-                        `^${escape(path.join(root, 'node_modules', m))}\\/.*$`
-                    )
-            )
+        // Redirect the library's package name to its TypeScript source directly,
+        // so Metro uses src/ instead of the built lib/ output — no babel-plugin-module-resolver needed.
+        resolveRequest: (context, moduleName, platform) => {
+            if (moduleName === pak.name) {
+                const base = path.join(root, pak.source);
+                const extensions = ['.tsx', '.ts', '.jsx', '.js'];
+                const filePath =
+                    extensions
+                        .map((ext) => base + ext)
+                        .find((f) => fs.existsSync(f)) ?? base;
+                return { filePath, type: 'sourceFile' };
+            }
+            return context.resolveRequest(context, moduleName, platform);
+        },
+
+        // We need to make sure that only one version is loaded for peerDependencies
+        // So we block them at the root, and alias them to the versions in example's node_modules
+        blockList: new RegExp(
+            modules
+                .map(
+                    (m) =>
+                        `^${path.join(root, 'node_modules', m).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')}\\/.*$`
+                )
+                .join('|')
         ),
 
         extraNodeModules: modules.reduce((acc, name) => {
             acc[name] = path.join(__dirname, 'node_modules', name);
             return acc;
         }, {}),
-    },
-
-    transformer: {
-        getTransformOptions: async () => ({
-            transform: {
-                experimentalImportSupport: false,
-                inlineRequires: true,
-            },
-        }),
     },
 };
 
