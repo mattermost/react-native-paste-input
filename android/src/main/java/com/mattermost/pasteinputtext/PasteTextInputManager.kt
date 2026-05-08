@@ -43,6 +43,16 @@ class PasteTextInputManager(context: ReactApplicationContext) : ReactTextInputMa
   override fun addEventEmitters(reactContext: ThemedReactContext, editText: ReactEditText) {
     super.addEventEmitters(reactContext, editText)
 
+    // ReactTextInputManager gates these listeners behind boolean @ReactProps
+    // (onSelectionChange, onContentSizeChange, onScroll, onKeyPress) that
+    // Fabric does not surface for codegen-based components. Attach them
+    // unconditionally — same as built-in <TextInput>, which always passes
+    // these handlers from JS regardless of whether the user provided one.
+    setOnSelectionChange(editText, true)
+    setOnContentSizeChange(editText, true)
+    setOnScroll(editText, true)
+    setOnKeyPress(editText, true)
+
     val pasteInputEditText = editText as PasteInputEditText
     val eventDispatcher = getEventDispatcher(reactContext, editText)
     pasteInputEditText.setOnPasteListener(PasteInputListener(pasteInputEditText, reactContext.surfaceId), eventDispatcher)
