@@ -26,7 +26,12 @@ import React, {
     forwardRef,
     useImperativeHandle,
 } from 'react';
-import { Platform, TextInput, NativeEventEmitter } from 'react-native';
+import {
+    Platform,
+    TextInput,
+    NativeEventEmitter,
+    findNodeHandle,
+} from 'react-native';
 import type {
     PastedFile,
     PasteInputProps,
@@ -78,9 +83,14 @@ function PasteInputIOSComponent(
 
     // Register/unregister with native module on mount/unmount
     useEffect(() => {
-        // Get the native tag from the ref's internal __nativeTag property
-        // @ts-ignore - __nativeTag is an internal property
-        const nativeTag = textInputRef.current?.__nativeTag;
+        // Use findNodeHandle so we work across both legacy and Fabric. Reading
+        // `__nativeTag` directly returns undefined on RN 0.76+/Fabric — the
+        // renderer exposes the tag as `_nativeTag` (single underscore) on the
+        // Fabric instance — which silently breaks paste interception because
+        // the input is never registered with the native module. See #54.
+        const nativeTag = textInputRef.current
+            ? findNodeHandle(textInputRef.current)
+            : null;
 
         if (!nativeTag) {
             if (__DEV__) {
