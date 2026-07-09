@@ -41,7 +41,7 @@ static BOOL pasteInputCanPerformActionIMP(id self, SEL _cmd, SEL action, id send
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSNumber *> *registrationGenerations;
 @end
 
-static id _reactHost = nil;
+static RCTRootViewFactory *_rootViewFactory = nil;
 
 @implementation PasteInputModule
 
@@ -55,7 +55,12 @@ RCT_EXPORT_MODULE()
 + (void)setup:(RCTRootViewFactory *)rootViewFactory
 {
 #ifdef RCT_NEW_ARCH_ENABLED
-    _reactHost = rootViewFactory.reactHost;
+    // The RCTHost is created lazily by the root view factory when the first
+    // surface mounts, which can happen after +setup: runs (e.g. under Expo,
+    // where the app is set up before the first surface renders). So keep the
+    // factory and read reactHost from it at lookup time instead of capturing a
+    // (possibly nil) value here.
+    _rootViewFactory = rootViewFactory;
 #endif
 }
 
@@ -173,9 +178,11 @@ RCT_EXPORT_MODULE()
 - (nullable id)getSurfacePresenter
 {
 #ifdef RCT_NEW_ARCH_ENABLED
+    // Read the host fresh from the factory (see +setup: for why it's not cached).
+    id reactHost = _rootViewFactory.reactHost;
     // Try bridgeless mode first (if reactHost is set)
-    if (_reactHost) {
-        return [_reactHost performSelector:@selector(surfacePresenter)];
+    if (reactHost) {
+        return [reactHost performSelector:@selector(surfacePresenter)];
     }
     // Fallback to bridge mode (Fabric with bridge enabled)
     else if (self.bridge) {
