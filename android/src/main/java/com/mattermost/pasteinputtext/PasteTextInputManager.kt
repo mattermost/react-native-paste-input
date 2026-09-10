@@ -55,6 +55,20 @@ class PasteTextInputManager(context: ReactApplicationContext) : ReactTextInputMa
 
     val pasteInputEditText = editText as PasteInputEditText
     val eventDispatcher = getEventDispatcher(reactContext, editText)
+
+    pasteInputEditText.setSelectionWatcher(object : PasteInputEditText.SelectionWatcher {
+      override fun onSelectionChanged(selStart: Int, selEnd: Int) {
+          eventDispatcher?.dispatchEvent(
+              PasteTextInputSelectionChangeEvent(
+                  UIManagerHelper.getSurfaceId(reactContext),
+                  pasteInputEditText.id,
+                  selStart,
+                  selEnd
+              )
+          )
+      }
+    })
+
     pasteInputEditText.setOnPasteListener(PasteInputListener(pasteInputEditText, reactContext.surfaceId), eventDispatcher)
   }
 
@@ -65,6 +79,23 @@ class PasteTextInputManager(context: ReactApplicationContext) : ReactTextInputMa
       MapBuilder.of("bubbled", "onPaste")
     )
     return map
+  }
+
+  override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
+    return MapBuilder.builder<String, Any>()
+        .put(
+            "onSelectionChange",
+            MapBuilder.of("registrationName", "onSelectionChange")
+        )
+        .put(
+            "onContentSizeChange", 
+            MapBuilder.of("registrationName", "onContentSizeChange")
+        )
+        .put(
+            "onScroll", 
+            MapBuilder.of("registrationName", "onScroll")
+        )
+        .build()
   }
 
   companion object {
