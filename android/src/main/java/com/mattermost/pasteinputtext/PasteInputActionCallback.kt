@@ -1,8 +1,5 @@
 package com.mattermost.pasteinputtext
 
-import android.content.ClipboardManager
-import android.content.Context
-import android.net.Uri
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
@@ -27,14 +24,9 @@ class PasteInputActionCallback(editText: PasteInputEditText, disabled: Boolean, 
   }
 
   override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-    val uri = getUriInClipboard()
-    if (item?.itemId == android.R.id.paste && uri != null) {
-      mEditText.getOnPasteListener().onPaste(uri, mEventDispatcher)
-      mode?.finish()
-    } else {
-      mEditText.onTextContextMenuItem(item!!.itemId)
-    }
-
+    // Paste goes through the view's OnReceiveContentListener, which splits files from text.
+    mEditText.onTextContextMenuItem(item!!.itemId)
+    if (item.itemId == android.R.id.paste) mode?.finish()
     return true
   }
 
@@ -55,18 +47,5 @@ class PasteInputActionCallback(editText: PasteInputEditText, disabled: Boolean, 
         item.isEnabled = !shouldDisableMenu
       }
     }
-  }
-
-  private fun getUriInClipboard() : Uri? {
-    val clipboardManager = mEditText.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    val clipData = clipboardManager.primaryClip ?: return null
-    val item = clipData.getItemAt(0) ?: return null
-    val chars = item.text ?: return null
-
-    val text = chars.toString()
-    return if (text.isNotEmpty()) {
-      null
-    } else item.uri
-
   }
 }
