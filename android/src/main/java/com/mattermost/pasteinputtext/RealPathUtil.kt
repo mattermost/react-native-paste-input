@@ -18,15 +18,9 @@ object RealPathUtil {
   fun getRealPathFromURI(context: Context, uri: Uri): String? {
     // DocumentProvider
     if (DocumentsContract.isDocumentUri(context, uri)) {
-      // ExternalStorageProvider
-      if (isExternalStorageDocument(uri)) {
-        val docId = DocumentsContract.getDocumentId(uri)
-        val split = docId.split((":").toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        val type = split[0]
-        if ("primary".equals(type, ignoreCase = true)) {
-          return context.getExternalFilesDir(split[1])?.absolutePath
-        }
-      } else if (isDownloadsDocument(uri)) {
+      // ExternalStorageProvider documents are copied like any other content (below): the app
+      // cannot read their filesystem path under scoped storage.
+      if (isDownloadsDocument(uri)) {
         // DownloadsProvider
         val id = DocumentsContract.getDocumentId(uri)
         if (!TextUtils.isEmpty(id)) {
