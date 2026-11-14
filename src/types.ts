@@ -1,5 +1,5 @@
 import type { ComponentRef, ForwardedRef } from 'react';
-import type { CodegenTypes, HostComponent, TextInputProps } from 'react-native';
+import type { HostComponent, TextInputProps } from 'react-native';
 
 type HostInstance = ComponentRef<HostComponent<PasteInputProps>>;
 
@@ -12,7 +12,7 @@ export type PasteTextInputInstance = HostInstance & {
 
 export interface PastedFile {
     fileName: string;
-    fileSize: CodegenTypes.Int32;
+    fileSize: number;
     type: string;
     uri: string;
 }
