@@ -177,7 +177,10 @@ RCT_EXPORT_MODULE()
     if (_reactHost) {
         return [_reactHost performSelector:@selector(surfacePresenter)];
     }
-    // Fallback to bridge mode (Fabric with bridge enabled)
+#ifndef RCT_REMOVE_LEGACY_ARCH
+    // Fallback to bridge mode (Fabric with bridge enabled). React Native declares
+    // RCTSurfacePresenterBridgeAdapter only without RCT_REMOVE_LEGACY_ARCH, which
+    // is on by default since 0.86; without the legacy arch there is no bridge.
     else if (self.bridge) {
         // self.bridge.surfacePresenter returns RCTSurfacePresenterBridgeAdapter
         RCTSurfacePresenterBridgeAdapter *adapter = self.bridge.surfacePresenter;
@@ -187,6 +190,7 @@ RCT_EXPORT_MODULE()
         // If that fails, the adapter itself might be the surface presenter
         return adapter;
     }
+#endif
 #endif
     return nil;
 }
