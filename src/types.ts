@@ -35,7 +35,7 @@ export type SmartPunctuation = 'default' | 'enable' | 'disable';
  * Props for the PasteInput component
  * Extends all standard TextInput props
  */
-export interface PasteInputProps extends TextInputProps {
+export interface PasteInputProps extends Omit<TextInputProps, 'forwardedRef'> {
     forwardedRef?: ForwardedRef<PasteTextInputInstance>;
     /**
      * Maps to numberOfLines on Android. Mirrors the HTML rows attribute.
