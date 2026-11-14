@@ -1,28 +1,21 @@
 import {
+    type CodegenTypes,
     type ColorValue,
     type HostComponent,
     type ViewProps,
 } from 'react-native';
-import type {
-    BubblingEventHandler,
-    DirectEventHandler,
-    Double,
-    Float,
-    Int32,
-    WithDefault,
-} from 'react-native/Libraries/Types/CodegenTypes';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 
 export type TargetedEvent = {
-    target: Int32;
+    target: CodegenTypes.Int32;
 };
 
 export interface PasteTextInputPasteEventData extends TargetedEvent {
     data: Readonly<
         {
             fileName: string;
-            fileSize: Int32;
+            fileSize: CodegenTypes.Int32;
             type: string;
             uri: string;
         }[]
@@ -34,52 +27,52 @@ export interface PasteTextInputPasteEventData extends TargetedEvent {
 
 export interface PasteTextInputContentSizeChangeEventData extends TargetedEvent {
     contentSize: {
-        width: Double;
-        height: Double;
+        width: CodegenTypes.Double;
+        height: CodegenTypes.Double;
     };
 }
 
 export interface PasteTextInputSelectionChangeEventData extends TargetedEvent {
     selection: Readonly<{
-        start: Int32;
-        end: Int32;
+        start: CodegenTypes.Int32;
+        end: CodegenTypes.Int32;
     }>;
 }
 
 export interface PasteTextInputScrollEventData extends TargetedEvent {
     contentInset: Readonly<{
-        top: Double;
-        bottom: Double;
-        left: Double;
-        right: Double;
+        top: CodegenTypes.Double;
+        bottom: CodegenTypes.Double;
+        left: CodegenTypes.Double;
+        right: CodegenTypes.Double;
     }>;
-    contentOffset: Readonly<{ x: Double; y: Double }>;
+    contentOffset: Readonly<{ x: CodegenTypes.Double; y: CodegenTypes.Double }>;
     contentSize: Readonly<{
-        width: Double;
-        height: Double;
+        width: CodegenTypes.Double;
+        height: CodegenTypes.Double;
     }>;
     layoutMeasurement: Readonly<{
-        width: Double;
-        height: Double;
+        width: CodegenTypes.Double;
+        height: CodegenTypes.Double;
     }>;
     responderIgnoreScroll: boolean;
-    velocity: Readonly<{ x: Double; y: Double }>;
+    velocity: Readonly<{ x: CodegenTypes.Double; y: CodegenTypes.Double }>;
 }
 
 export interface PasteTextInputChangeEventData extends TargetedEvent {
-    eventCount: Int32;
+    eventCount: CodegenTypes.Int32;
     text: string;
 }
 
 export interface PasteTextInputTextInputEventData extends TargetedEvent {
     text: string;
     previousText: string;
-    range: Readonly<{ start: Int32; end: Int32 }>;
+    range: Readonly<{ start: CodegenTypes.Int32; end: CodegenTypes.Int32 }>;
 }
 
 export interface PasteTextInputEditEventData extends TargetedEvent {
     text: string;
-    eventCount: Int32;
+    eventCount: CodegenTypes.Int32;
 }
 
 export interface PasteTextInputKeyEventData extends TargetedEvent {
@@ -164,11 +157,11 @@ type SubmitBehavior = 'submit' | 'blurAndSubmit' | 'newline';
 
 export interface NativeProps extends ViewProps {
     allowFontScaling?: boolean;
-    autoCapitalize?: WithDefault<
+    autoCapitalize?: CodegenTypes.WithDefault<
         'none' | 'sentences' | 'words' | 'characters',
         'none'
     >;
-    autoComplete?: WithDefault<Autocomplete, 'off'>;
+    autoComplete?: CodegenTypes.WithDefault<Autocomplete, 'off'>;
     autoCorrect?: boolean;
     autoFocus?: boolean;
     blurOnSubmit?: boolean;
@@ -183,20 +176,20 @@ export interface NativeProps extends ViewProps {
     enablesReturnKeyAutomatically?: boolean;
     importantForAutofill?: string;
     inlineImageLeft?: string;
-    inlineImagePadding?: Int32;
+    inlineImagePadding?: CodegenTypes.Int32;
     inputAccessoryViewID?: string;
     keyboardAppearance?: string;
-    keyboardType?: WithDefault<KeyboardType, 'default'>;
-    maxFontSizeMultiplier?: Float;
-    maxLength?: Int32;
-    mostRecentEventCount?: Int32;
+    keyboardType?: CodegenTypes.WithDefault<KeyboardType, 'default'>;
+    maxFontSizeMultiplier?: CodegenTypes.Float;
+    maxLength?: CodegenTypes.Int32;
+    mostRecentEventCount?: CodegenTypes.Int32;
     multiline?: boolean;
-    numberOfLines?: Int32;
+    numberOfLines?: CodegenTypes.Int32;
     passwordRules?: string;
     placeholder?: string;
     placeholderTextColor?: ColorValue;
     returnKeyLabel?: string;
-    returnKeyType?: WithDefault<ReturnKeyType, 'done'>;
+    returnKeyType?: CodegenTypes.WithDefault<ReturnKeyType, 'done'>;
     scrollEnabled?: boolean;
     secureTextEntry?: boolean;
     selectionColor?: ColorValue;
@@ -206,10 +199,10 @@ export interface NativeProps extends ViewProps {
     smartInsertDelete?: boolean;
     smartPunctuation?: string;
     spellCheck?: boolean;
-    submitBehavior?: WithDefault<SubmitBehavior, 'submit'>;
+    submitBehavior?: CodegenTypes.WithDefault<SubmitBehavior, 'submit'>;
 
     text?: string;
-    textBreakStrategy?: WithDefault<
+    textBreakStrategy?: CodegenTypes.WithDefault<
         'simple' | 'highQuality' | 'balanced',
         'simple'
     >;
@@ -217,29 +210,32 @@ export interface NativeProps extends ViewProps {
     underlineColorAndroid?: ColorValue;
     value?: string;
 
-    onBlur?: BubblingEventHandler<TargetedEvent>;
-    onChange?: BubblingEventHandler<PasteTextInputChangeEventData>;
-    onChangeText?: BubblingEventHandler<PasteTextInputChangeEventData>;
-    onEndEditing?: BubblingEventHandler<PasteTextInputEditEventData>;
-    onFocus?: BubblingEventHandler<TargetedEvent>;
-    onKeyPress?: BubblingEventHandler<PasteTextInputKeyEventData>;
-    onPaste?: BubblingEventHandler<PasteTextInputPasteEventData>;
-    onSubmitEditing?: BubblingEventHandler<PasteTextInputEditEventData>;
+    onBlur?: CodegenTypes.BubblingEventHandler<TargetedEvent>;
+    onChange?: CodegenTypes.BubblingEventHandler<PasteTextInputChangeEventData>;
+    onChangeText?: CodegenTypes.BubblingEventHandler<PasteTextInputChangeEventData>;
+    onEndEditing?: CodegenTypes.BubblingEventHandler<PasteTextInputEditEventData>;
+    onFocus?: CodegenTypes.BubblingEventHandler<TargetedEvent>;
+    onKeyPress?: CodegenTypes.BubblingEventHandler<PasteTextInputKeyEventData>;
+    onPaste?: CodegenTypes.BubblingEventHandler<PasteTextInputPasteEventData>;
+    onSubmitEditing?: CodegenTypes.BubblingEventHandler<PasteTextInputEditEventData>;
 
-    onContentSizeChange?: DirectEventHandler<PasteTextInputContentSizeChangeEventData>;
-    onScroll?: DirectEventHandler<PasteTextInputScrollEventData>;
-    onSelectionChange?: DirectEventHandler<PasteTextInputSelectionChangeEventData>;
+    onContentSizeChange?: CodegenTypes.DirectEventHandler<PasteTextInputContentSizeChangeEventData>;
+    onScroll?: CodegenTypes.DirectEventHandler<PasteTextInputScrollEventData>;
+    onSelectionChange?: CodegenTypes.DirectEventHandler<PasteTextInputSelectionChangeEventData>;
 
     textShadowColor?: ColorValue;
-    textShadowRadius?: Float;
+    textShadowRadius?: CodegenTypes.Float;
     textDecorationLine?: string;
     fontStyle?: string;
-    textShadowOffset?: Readonly<{ width?: Double; height?: Double }>;
-    lineHeight?: Float;
+    textShadowOffset?: Readonly<{
+        width?: CodegenTypes.Double;
+        height?: CodegenTypes.Double;
+    }>;
+    lineHeight?: CodegenTypes.Float;
     textTransform?: string;
-    color?: Int32;
-    letterSpacing?: Float;
-    fontSize?: Float;
+    color?: CodegenTypes.Int32;
+    letterSpacing?: CodegenTypes.Float;
+    fontSize?: CodegenTypes.Float;
     textAlign?: string;
     includeFontPadding?: boolean;
     fontWeight?: string;
@@ -260,10 +256,10 @@ interface NativeCommands {
     ) => void;
     readonly setTextAndSelection: (
         viewRef: React.ElementRef<PasteTextInputNativeComponentType>,
-        mostRecentEventCount: Int32,
+        mostRecentEventCount: CodegenTypes.Int32,
         value: string | null | undefined, // in theory this is nullable
-        start: Int32,
-        end: Int32
+        start: CodegenTypes.Int32,
+        end: CodegenTypes.Int32
     ) => void;
 }
 
