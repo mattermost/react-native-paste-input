@@ -1,8 +1,7 @@
-import type { ForwardedRef } from 'react';
+import type { ComponentRef, ForwardedRef } from 'react';
 import type { HostComponent, TextInputProps } from 'react-native';
-import type { Int32 } from 'react-native/Libraries/Types/CodegenTypes';
 
-type HostInstance = InstanceType<HostComponent<PasteInputProps>>;
+type HostInstance = ComponentRef<HostComponent<PasteInputProps>>;
 
 export type PasteTextInputInstance = HostInstance & {
     clear: () => void;
@@ -13,7 +12,7 @@ export type PasteTextInputInstance = HostInstance & {
 
 export interface PastedFile {
     fileName: string;
-    fileSize: Int32;
+    fileSize: number;
     type: string;
     uri: string;
 }
@@ -36,7 +35,7 @@ export type SmartPunctuation = 'default' | 'enable' | 'disable';
  * Props for the PasteInput component
  * Extends all standard TextInput props
  */
-export interface PasteInputProps extends TextInputProps {
+export interface PasteInputProps extends Omit<TextInputProps, 'forwardedRef'> {
     forwardedRef?: ForwardedRef<PasteTextInputInstance>;
     /**
      * Maps to numberOfLines on Android. Mirrors the HTML rows attribute.
